@@ -13,7 +13,7 @@ It is a member of the `zu*` family (sibling checkouts in `../`): an *engine* pac
 
 ## Current state
 
-**2026-10-08: Stages 0–4 done.** Every function of design §5 exists: `dedup_chunk()`, `dedup_manifest()`, `dedup_diff()`; `dedup_store()`, `dedup_backend()`, `dedup_put()`, `dedup_get()`, `dedup_has()`, `dedup_missing()`, `dedup_delete()`, `dedup_verify()`, `dedup_gc()`; `zudedup_info()`. The boundary rule is design D14 (Python `fastcdc` 1.7.0's exactly). Gates: `boundaries*.tsv`, `hash-reference.tsv`, the fuzzer with its canary, lint, symbols, the mutation check, and the two-process test. Stage 5 adds the Python conformance job, benchmarks and the documentation. Tracking: parent #1, stages #2–#8.
+**2026-10-08: Stages 0–5 done.** Every function of design §5 exists and is documented, with a vignette. The boundary rule is design D14 (Python `fastcdc` 1.7.0's exactly), and `conformance.yaml` checks it against Python and the digests against `xxhsum`. Gates: `boundaries*.tsv`, `hash-reference.tsv`, the fuzzer with its canary, lint, symbols, the mutation check, the two-process test. Stage 6, the release, waits for zufast (and zucrypt, a `Suggests`) on CRAN. Tracking: parent #1, stages #2–#8.
 
 Update this paragraph at the end of every stage.
 
@@ -61,8 +61,8 @@ tools/run-fuzz [secs]          # canary first, then fuzz_cdc (block independence
 tools/run-lint                 # -Wall -Wextra -Wpedantic -Wshadow -Werror on project C
 tools/check-symbols <so>       # only R_init_zudedup exported; no stdio/abort/exit/assert
 tools/run-mutation-check       # every R `# GUARD:` seen to be load-bearing (needs pkgload, testthat)
-tools/run-conformance          # Stage 5: Python fastcdc with our table agrees on every fixture (CI only)
-tools/run-benchmarks           # Stage 5: chunk throughput, hashing, put vs writeBin; not a CI gate
+tools/run-conformance          # Python fastcdc 1.7.0 and xxhsum agree (CI; locally with PYTHON=<venv python>)
+tools/run-benchmarks [MB]      # chunk throughput, hashing, put vs writeBin; not a CI gate
 ```
 
 ## Architecture

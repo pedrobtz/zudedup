@@ -1,0 +1,137 @@
+---
+title: "Versioning large objects with zudedup"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Versioning large objects with zudedup}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+```{r setup}
+library(zudedup)
+```
+
+Keeping every version of a large object costs the size of every version,
+unless the versions share their storage. zudedup makes them share it: it
+splits each version into chunks whose boundaries depend only on the bytes
+around them, names each chunk by its hash, and stores each chunk once.
+
+## Two versions of a data frame
+
+Take a data frame, and a second version with a few rows changed.
+
+```{r}
+set.seed(1)
+v1 <- data.frame(
+  id = 1:50000,
+  group = sample(letters, 50000, replace = TRUE),
+  value = round(rnorm(50000), 4)
+)
+v2 <- v1
+v2$value[c(100, 25000, 49000)] <- 0
+x1 <- serialize(v1, NULL, xdr = FALSE)
+x2 <- serialize(v2, NULL, xdr = FALSE)
+length(x1)
+```
+
+`dedup_chunk()` shows the chunks. Their sizes cluster around `avg`, 8 KiB
+by default, and no chunk is longer than `max`.
+
+```{r}
+chunks <- dedup_chunk(x1)
+nrow(chunks)
+summary(chunks$length)
+```
+
+A manifest records the chunk digests in order, with the size and the
+digest of the whole object. Comparing two manifests says how much the
+versions share:
+
+```{r}
+m1 <- dedup_manifest(x1)
+m2 <- dedup_manifest(x2)
+m1
+d <- dedup_diff(m1, m2)
+d$ratio
+length(d$added)
+```
+
+Changing three values touched three chunks; the rest of the second version
+is already there.
+
+## A store
+
+A store keeps each chunk once. Putting the first version writes all its
+chunks; putting the second writes only the ones it does not share.
+
+```{r}
+store <- dedup_store(file.path(tempdir(), "vignette-store"), create = TRUE)
+store
+dedup_missing(store, m1) |> length()
+dedup_put(store, x1)
+dedup_missing(store, m2) |> length()
+dedup_put(store, x2)
+length(dedup_missing(store, m2))
+```
+
+`dedup_get()` reassembles a version from its manifest, checking every
+chunk against its digest, so a store cannot hand back the wrong bytes.
+
+```{r}
+identical(unserialize(dedup_get(store, m2)), v2)
+```
+
+The manifest is the only way back to an object: keep it, for instance in a
+database or next to a name. When a version is no longer needed, pass the
+manifests you keep to `dedup_gc()`, which deletes every chunk none of them
+uses.
+
+```{r}
+deleted <- dedup_gc(store, keep = m2)
+length(deleted)
+identical(unserialize(dedup_get(store, m2)), v2)
+```
+
+## Choosing the hash
+
+The default hash, XXH3-128, is fast and is not cryptographic: someone who
+can choose what goes into a store could make two chunks with the same
+digest. That does not matter for a cache or a private store, and it does
+for a store shared with parties you do not trust. There, use
+`hash = "sha256"`, which needs the zucrypt package:
+
+```{r, eval = requireNamespace("zucrypt", quietly = TRUE)}
+dedup_manifest(x1, hash = "sha256")
+```
+
+## Other backends
+
+`dedup_store()` keeps chunks in a directory. `dedup_backend()` builds a
+store from five functions of your own, so chunks can live anywhere: here,
+an environment.
+
+```{r}
+env <- new.env()
+mem <- dedup_backend(
+  has = function(hashes) vapply(hashes, exists, TRUE, envir = env,
+                                inherits = FALSE, USE.NAMES = FALSE),
+  get = function(hash) get0(hash, envir = env, inherits = FALSE),
+  put = function(hash, bytes) assign(hash, bytes, envir = env),
+  delete = function(hashes) rm(list = hashes, envir = env),
+  list = function() ls(env)
+)
+m <- dedup_put(mem, x1)
+length(ls(env))
+identical(dedup_get(mem, m), x1)
+```
+
+A backend's `put` must be atomic: once it returns, the chunk is there
+whole, or `has()` must not report it.
+
+```{r, include = FALSE}
+unlink(file.path(tempdir(), "vignette-store"), recursive = TRUE)
+```

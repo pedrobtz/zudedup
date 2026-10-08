@@ -1,0 +1,22 @@
+#!/bin/sh
+# Conformance against independent implementations (design section 15; roadmap
+# Stage 5): Python's fastcdc 1.7.0, with zudedup's gear table substituted,
+# must give the same boundaries on every input and parameter set, and
+# xxhsum -H2 the same digests. Nothing under tests/ needs Python or xxhsum;
+# this runs in CI (conformance.yaml) and wherever both are at hand. Needs
+# zudedup installed. Run from the package root.
+#
+#   tools/run-conformance
+#
+# It makes a virtual environment for fastcdc in a temporary directory unless
+# PYTHON already names an interpreter that has it.
+set -eu
+
+if [ -z "${PYTHON:-}" ]; then
+  VENV=$(mktemp -d)
+  trap 'rm -rf "$VENV"' EXIT
+  python3 -m venv "$VENV"
+  "$VENV/bin/pip" install --quiet fastcdc==1.7.0
+  PYTHON="$VENV/bin/python"
+fi
+PYTHON="$PYTHON" Rscript tools/conformance.R

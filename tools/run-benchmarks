@@ -1,0 +1,9 @@
+#!/bin/sh
+# Throughput against design section 16's targets: chunking (boundaries only,
+# and with XXH3-128), and dedup_put() into an empty store against writeBin()
+# of the same bytes. Not a CI gate; results go into design section 16 by
+# hand. Needs zudedup installed. Run from the package root.
+#
+#   tools/run-benchmarks [megabytes]    default 512
+set -eu
+exec Rscript tools/benchmarks.R "${1:-512}"

@@ -1,0 +1,39 @@
+# Roadmap Stage 5: zudedup agrees with independent implementations. Python's
+# fastcdc 1.7.0, given zudedup's gear table, must give the same boundaries on
+# every input and parameter set, and xxhsum -H2 the same XXH3-128 digests
+# (tools/run-conformance). Nothing under tests/ needs either, so this is the
+# only place they run.
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+name: conformance
+
+permissions: read-all
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  conformance:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          dependencies: '"hard"'
+      - name: Install xxhsum and the package
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q xxhash python3-venv
+          xxhsum --version
+          R CMD INSTALL .
+      - run: tools/run-conformance
