@@ -16,7 +16,7 @@ dedup_delete(store, hashes)
 }
 \description{
 Removes the named chunks. An object whose manifest names a deleted chunk
-can no longer be read; \code{dedup_gc()} is the safe way to reclaim space.
+can no longer be read; \code{\link[=dedup_gc]{dedup_gc()}} is the safe way to reclaim space.
 }
 \examples{
 store <- dedup_store(tempfile(), create = TRUE)

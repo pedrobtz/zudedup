@@ -40,7 +40,7 @@ its digest. The layout is:
 
 Writes go to \verb{tmp/} and are renamed into \verb{objects/}, so a chunk is either
 complete or absent, and two processes may put into one store at once.
-\code{dedup_gc()} is not safe against a concurrent put; take whatever lock
+\code{\link[=dedup_gc]{dedup_gc()}} is not safe against a concurrent put; take whatever lock
 your system provides around it.
 
 The default hash, XXH3-128, is fast and not cryptographic: an adversary

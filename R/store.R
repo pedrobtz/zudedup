@@ -19,7 +19,7 @@ zdd_store_format <- 1L
 #'
 #' Writes go to `tmp/` and are renamed into `objects/`, so a chunk is either
 #' complete or absent, and two processes may put into one store at once.
-#' `dedup_gc()` is not safe against a concurrent put; take whatever lock
+#' [dedup_gc()] is not safe against a concurrent put; take whatever lock
 #' your system provides around it.
 #'
 #' The default hash, XXH3-128, is fast and not cryptographic: an adversary
@@ -376,7 +376,7 @@ dedup_missing <- function(store, manifest) {
 #' Delete chunks from a store
 #'
 #' Removes the named chunks. An object whose manifest names a deleted chunk
-#' can no longer be read; `dedup_gc()` is the safe way to reclaim space.
+#' can no longer be read; [dedup_gc()] is the safe way to reclaim space.
 #'
 #' @inheritParams dedup_has
 #' @return `store`, invisibly.

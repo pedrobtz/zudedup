@@ -199,7 +199,7 @@ Reusable workflows from `pedrobtz/r-actions`; the scaffold's three exist at `@v1
 
 ## Stage 4 — Diff, gc, verify; the concurrency tests · S
 
-**Status:** not started.
+**Status:** done 2026-10-08 ([#6](https://github.com/pedrobtz/zudedup/issues/6)).
 
 **Do**
 
@@ -210,6 +210,14 @@ Reusable workflows from `pedrobtz/r-actions`; the scaffold's three exist at `@v1
 **Exit**
 
 - Every function of §5 exists and is tested; the two-process test passes on all three platforms.
+
+**What actually happened**
+
+- The dedup property's 95 % was arithmetic, not measurement: with 8 KiB chunks each of 100 scattered edits costs about one size-biased chunk (about 11 KB), so about 89 % is shared, measured 0.889–0.896. The test asserts 85 % and design §15 says why.
+- `dedup_verify()` returns the corrupt digests (empty when sound) rather than a flag, so a caller can delete or re-fetch them.
+- `dedup_gc()` accepts one manifest or a list, and empties `tmp/` only for a filesystem store; a backend's own partial writes are its business (D16 makes them its responsibility).
+- The two-process test runs each put in a `callr` background process; under `devtools::test()` the process loads the source with `pkgload`, under `R CMD check` the installed package. It is behind `skip_heavy()`, so it runs in CI's full profile and locally, not on CRAN.
+- `fixture_bytes()` is cached in the helper: generating 4 MiB of SplitMix64 in R is cheap natively and slow under valgrind, where Stage 1's PR spent most of its time.
 
 ---
 

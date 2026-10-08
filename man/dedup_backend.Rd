@@ -29,10 +29,10 @@ of \code{bytes}, and a crash must not leave a partial chunk that \code{has()}
 reports. A second put of the same digest and bytes must be harmless.}
 
 \item{delete}{\verb{function(hashes)}, optional: removes chunks; needed by
-\code{\link[=dedup_delete]{dedup_delete()}} and \code{dedup_gc()}.}
+\code{\link[=dedup_delete]{dedup_delete()}} and \code{\link[=dedup_gc]{dedup_gc()}}.}
 
 \item{list}{\verb{function()}, optional: the digests of every stored chunk;
-needed by \code{dedup_verify()} and \code{dedup_gc()}.}
+needed by \code{\link[=dedup_verify]{dedup_verify()}} and \code{\link[=dedup_gc]{dedup_gc()}}.}
 
 \item{hash, min, avg, max}{What the backend's chunks are made with, as for
 \code{\link[=dedup_chunk]{dedup_chunk()}}.}

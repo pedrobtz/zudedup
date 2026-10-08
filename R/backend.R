@@ -24,9 +24,9 @@
 #'   of `bytes`, and a crash must not leave a partial chunk that `has()`
 #'   reports. A second put of the same digest and bytes must be harmless.
 #' @param delete `function(hashes)`, optional: removes chunks; needed by
-#'   [dedup_delete()] and `dedup_gc()`.
+#'   [dedup_delete()] and [dedup_gc()].
 #' @param list `function()`, optional: the digests of every stored chunk;
-#'   needed by `dedup_verify()` and `dedup_gc()`.
+#'   needed by [dedup_verify()] and [dedup_gc()].
 #' @param hash,min,avg,max What the backend's chunks are made with, as for
 #'   [dedup_chunk()].
 #' @return A `dedup_backend`, which every store function accepts.

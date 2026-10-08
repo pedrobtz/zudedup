@@ -106,4 +106,13 @@ gear_table <- function() u64_to_hex(u64_shr(splitmix64(256, GEAR_SEED), 1))
 
 # The seed of the boundary fixture's input (design section 15).
 FIXTURE_SEED <- "7a75646564757030"
-fixture_bytes <- function() splitmix_bytes(4 * 1024^2, FIXTURE_SEED)
+# Cached: generating it in R takes a fraction of a second natively and much
+# longer under valgrind, and a dozen tests use it. The cache holds the same
+# bytes every call would make, so no test can see another's use of it.
+fixture_cache <- new.env(parent = emptyenv())
+fixture_bytes <- function() {
+  if (is.null(fixture_cache$bytes)) {
+    fixture_cache$bytes <- splitmix_bytes(4 * 1024^2, FIXTURE_SEED)
+  }
+  fixture_cache$bytes
+}
