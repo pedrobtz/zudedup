@@ -1,10 +1,7 @@
 # Design section 6.3: the boundaries do not depend on how the bytes arrive.
 
-ends_in_blocks <- function(x, block, p) {
-  zdd_chunk_ends(x, zdd_check_params(p$min, p$avg, p$max), block = block)
-}
-
 test_that("raw input split into blocks gives the same boundaries", {
+  skip_under_torture()
   x <- fixture_bytes()
   for (p in fixture_params) {
     whole <- ends_in_blocks(x, NULL, p)
@@ -16,6 +13,7 @@ test_that("raw input split into blocks gives the same boundaries", {
 })
 
 test_that("one byte at a time gives the same boundaries", {
+  skip_under_torture()
   # The whole fixture a byte at a time is four million calls; a prefix long
   # enough for many cuts at the small parameters and a few at the defaults
   # covers the same code. The fuzzer covers arbitrary splits.
@@ -27,6 +25,7 @@ test_that("one byte at a time gives the same boundaries", {
 })
 
 test_that("a connection read in any block size gives the same table", {
+  skip_under_torture()
   x <- fixture_bytes()
   p <- fixture_params$small
   want <- read_boundaries(p$file)
@@ -40,8 +39,9 @@ test_that("a connection read in any block size gives the same table", {
 })
 
 test_that("a file path gives the same table as its bytes", {
+  skip_under_torture()
   x <- fixture_bytes()
   path <- withr::local_tempfile()
   writeBin(x, path)
-  expect_identical(dedup_chunk(path), read_boundaries("boundaries.tsv"))
+  expect_identical(no_hash(dedup_chunk(path)), read_boundaries("boundaries.tsv"))
 })

@@ -85,6 +85,7 @@ splitmix64 <- function(n, seed) {
 
 # n bytes: the SplitMix64 stream from `seed`, each output little-endian.
 splitmix_bytes <- function(n, seed) {
+  if (n == 0) return(raw())
   z <- splitmix64(ceiling(n / 8), seed)
   b <- rbind(z[, 1] %% 256, z[, 1] %/% 256, z[, 2] %% 256, z[, 2] %/% 256,
              z[, 3] %% 256, z[, 3] %/% 256, z[, 4] %% 256, z[, 4] %/% 256)

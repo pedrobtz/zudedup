@@ -32,8 +32,18 @@ read_boundaries <- function(file) {
 
 # dedup_chunk()'s table for x is `table`, row for row.
 expect_chunks <- function(x, table, ...) {
-  expect_identical(dedup_chunk(x, ...), table)
+  expect_identical(dedup_chunk(x, ...)[c("offset", "length")], table)
 }
+
+# The pinned reference digests (fixtures/hash-reference.tsv): XXH3-128 from
+# libxxhash (python-xxhash 4.0.1, the digest `xxhsum -H2` prints) and SHA-256
+# from Python's hashlib, computed once.
+read_hash_reference <- function() {
+  utils::read.delim(test_path("fixtures", "hash-reference.tsv"), colClasses = "character")
+}
+
+# A data frame without its row names' type getting in the way.
+no_hash <- function(t) t[c("offset", "length")]
 
 # The invariants every chunk table has (design section 6.2): chunks tile the
 # input, none is longer than max, and every chunk but the last is longer
@@ -44,4 +54,9 @@ expect_valid_chunks <- function(table, size, min, max) {
   expect_identical(table$offset, cumsum(c(0, as.numeric(table$length)))[seq_len(n)])
   expect_true(all(table$length <= max))
   if (n > 1) expect_true(all(table$length[-n] > min | table$length[-n] == max))
+}
+
+# The chunk ends of x fed in blocks of `block` bytes (NULL: whole).
+ends_in_blocks <- function(x, block, p) {
+  zdd_chunk_ends(x, zdd_check_params(p$min, p$avg, p$max), block = block)
 }
