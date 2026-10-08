@@ -52,6 +52,7 @@ test_that("a repeated chunk is stored and checked once", {
 })
 
 test_that("a connection and a file put in bounded blocks", {
+  skip_under_torture()
   store <- local_store()
   x <- splitmix_bytes(3 * 1024^2, "3")
   path <- withr::local_tempfile()
