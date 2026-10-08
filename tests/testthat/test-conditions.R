@@ -4,6 +4,7 @@ test_that("every condition inherits zudedup_error and carries its fields", {
   expect_s3_class(e, c("zudedup_store_error", "zudedup_error", "error"))
   expect_identical(e$hash, "ab")
   expect_identical(e$index, 3L)
+  expect_identical(e$problem, NA_character_)
 
   e <- tryCatch(zdd_limit_error("max_chunks", 10, "too many"),
                 error = identity)
