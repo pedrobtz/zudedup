@@ -17,8 +17,10 @@ concurrency:
 
 jobs:
   R-CMD-check:
-    uses: pedrobtz/r-actions/.github/workflows/r-cmd-check.yml@v1
+    uses: pedrobtz/r-actions/.github/workflows/r-cmd-check.yml@bdfde5edd37f25b33af142a4a881585e77bda3c2 # v1.22.0
     with:
       # Quick on each push to a pull request, full after merge. The
       # `full-ci` label runs the full set on a pull request before merging.
       profile: ${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'full-ci') && 'quick' || 'full' }}
+      # The full profile also runs the slow sweeps (ZUDEDUP_SLOW_TESTS).
+      env: ${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'full-ci') && '' || 'ZUDEDUP_SLOW_TESTS=true' }}
