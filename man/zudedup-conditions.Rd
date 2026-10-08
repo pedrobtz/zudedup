@@ -28,3 +28,9 @@ written.}
 \code{limit_value}.}
 }
 }
+\examples{
+tryCatch(
+  dedup_chunk(raw(10), avg = 5000),
+  zudedup_invalid_argument = function(e) e$arg
+)
+}

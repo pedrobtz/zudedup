@@ -114,7 +114,7 @@ The chunker is R-free behind `zdd_check.h`, builds with `-DZDD_STANDALONE`, and 
 ```r
 # chunking
 dedup_chunk(x, min = 2048, avg = 8192, max = 65536)
-                                  # raw or connection -> data frame of offset, length, hash
+                                  # raw, connection or path -> data frame of offset, length, hash
 dedup_manifest(x, ..., hash = c("xxh3", "sha256"))
                                   # raw, connection or path -> dedup_manifest
 dedup_diff(a, b)                  # two manifests -> shared, added, removed
@@ -143,7 +143,7 @@ Eleven functions, one constructor for backends, one value class (`dedup_manifest
 
 ### Chunking arguments
 
-`min`, `avg` and `max` are bytes, with `min <= avg <= max`; `avg` must be a power of two, which is what the mask derivation needs. The ranges are the Python `fastcdc` package's, so the conformance test covers every legal setting: `min` in [64, 2^26], `avg` in [256, 2^28], `max` in [1024, 2^30]. The defaults are FastCDC's: 2 KiB, 8 KiB, 64 KiB. A connection is read in 1 MiB blocks and the chunker's state carries across blocks, so memory is bounded by `max` plus the block. `dedup_chunk()` of a connection reads it whole in blocks and returns the table; it does not keep the bytes.
+`min`, `avg` and `max` are bytes, with `min <= avg <= max`; `avg` must be a power of two, which is what the mask derivation needs. The ranges are the Python `fastcdc` package's, so the conformance test covers every legal setting: `min` in [64, 2^26], `avg` in [256, 2^28], `max` in [1024, 2^30]. The defaults are FastCDC's: 2 KiB, 8 KiB, 64 KiB. A path is opened as a connection (through `R/zu_source.R`, copied verbatim from zuxml at Stage 1). A connection is read in 1 MiB blocks and the chunker's state carries across blocks, so memory is bounded by `max` plus the block. `dedup_chunk()` of a connection reads it whole in blocks and returns the table; it does not keep the bytes.
 
 ### Manifests
 

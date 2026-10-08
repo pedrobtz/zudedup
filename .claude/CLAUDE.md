@@ -13,7 +13,7 @@ It is a member of the `zu*` family (sibling checkouts in `../`): an *engine* pac
 
 ## Current state
 
-**2026-10-08: Stage 0 done.** The package checks 0/0/0 and the format constants are committed: `src/zdd_gear.h` (from `tools/make-gear.R`; the boundary rule is design D14, Python `fastcdc` 1.7.0's exactly, with a right shift and a table below 2^63) and the fixture input's seed (`helper-bytes.R`). There is no chunking code yet; Stage 1 adds the chunker and commits `boundaries.tsv`. Tracking: parent #1, stages #2–#8.
+**2026-10-08: Stages 0 and 1 done.** The format constants are committed (`src/zdd_gear.h`; the boundary rule is design D14, Python `fastcdc` 1.7.0's exactly) and the chunker works: `dedup_chunk()` over raw, connection or path, block-independent, with `boundaries.tsv` and `boundaries-small.tsv` as the format gate, a fuzzer with a canary, and the lint and symbol gates. Stage 2 adds hashing and manifests. Tracking: parent #1, stages #2–#8.
 
 Update this paragraph at the end of every stage.
 
@@ -56,9 +56,10 @@ Gate scripts, each arriving at the roadmap stage named:
 
 ```sh
 Rscript tools/make-gear.R      # regenerate src/zdd_gear.h from the seed; must be byte-identical
-tools/run-fuzz [secs]          # Stage 1: canary first, then fuzz_cdc (block independence) under ASan+UBSan
-tools/run-lint                 # Stage 1: -Wall -Wextra -Wpedantic -Wshadow -Werror on project C
-tools/check-symbols <so>       # Stage 1: only R_init_zudedup exported; no stdio/abort/exit/assert
+tools/run-fuzz [secs]          # canary first, then fuzz_cdc (block independence) under ASan+UBSan;
+                               # macOS: FUZZ_CC=/opt/homebrew/opt/llvm/bin/clang
+tools/run-lint                 # -Wall -Wextra -Wpedantic -Wshadow -Werror on project C
+tools/check-symbols <so>       # only R_init_zudedup exported; no stdio/abort/exit/assert
 tools/run-mutation-check       # Stage 3: every manifest and store guard seen to be load-bearing
 tools/run-conformance          # Stage 5: Python fastcdc with our table agrees on every fixture (CI only)
 tools/run-benchmarks           # Stage 5: chunk throughput, hashing, put vs writeBin; not a CI gate
