@@ -1,0 +1,30 @@
+# Valgrind suppressions for the valgrind job in .github/workflows/native-checks.yaml.
+#
+# tools/ is in .Rbuildignore, so nothing here reaches the tarball or CRAN.
+#
+# One entry, and the block is cli's, not this package's. testthat reports
+# progress through cli, and cli starts a timer thread (pthread_create in
+# cli.so) that lives until the process exits. glibc allocates that thread's
+# thread-local storage (_dl_allocate_tls, 368 bytes here) when the thread is
+# made; a thread still running at exit leaves it allocated, and valgrind
+# reports it as "possibly lost" because the only pointer to it is in the
+# thread's own descriptor. Nothing is lost and nothing in zudedup is
+# involved.
+#
+# It first appeared at Stage 4 (2026-10-08), when the heavy tests made the
+# suite run long enough under valgrind (32 minutes) for the thread to be
+# started. Definitely and indirectly lost were 0, with no invalid access.
+#
+# Scoped to a possible leak whose allocation comes from pthread_create called
+# from cli.so, so a real leak anywhere else is still reported.
+{
+   cli-timer-thread-tls
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   ...
+   fun:_dl_allocate_tls
+   ...
+   fun:pthread_create*
+   obj:*/cli/libs/cli.so
+}
