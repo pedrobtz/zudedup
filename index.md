@@ -1,0 +1,24 @@
+# zudedup
+
+The goal of zudedup is to …
+
+## Installation
+
+You can install the development version of zudedup from
+[GitHub](https://github.com/) with:
+
+``` r
+
+# install.packages("pak")
+pak::pak("pedrobtz/zudedup")
+```
+
+## Example
+
+This is a basic example which shows you how to solve a common problem:
+
+``` r
+
+library(zudedup)
+## basic example code
+```
