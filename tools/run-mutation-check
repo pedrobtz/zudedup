@@ -1,0 +1,9 @@
+#!/bin/sh
+# Proves every guard is load-bearing (design section 12; roadmap Stage 3):
+# each "# GUARD: name" if-statement in R/ has its condition replaced by FALSE
+# in turn, in the loaded namespace, and the test named "GUARD name" must then
+# fail. A guard whose removal changes nothing was never doing anything. Each
+# test is also run against the unmutated code first and must pass. Needs
+# pkgload and testthat. Run from the package root.
+set -eu
+exec Rscript tools/mutation-check.R

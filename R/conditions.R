@@ -14,8 +14,9 @@
 #'     condition carries `arg`, the argument at fault.}
 #'   \item{`zudedup_store_error`}{A chunk is missing from a store, or its
 #'     bytes do not hash to its name, or the store itself is unusable. The
-#'     condition carries `hash`, the chunk's digest, and `index`, its
-#'     1-based position in the manifest, where they apply.}
+#'     condition carries `problem`, `"missing"` or `"corrupt"` for a chunk
+#'     (`NA` otherwise); `hash`, the chunk's digest; and `index`, its 1-based
+#'     position in the manifest, where they apply.}
 #'   \item{`zudedup_algorithm_error`}{A manifest's hash algorithm or
 #'     chunking parameters differ from the store's or from another
 #'     manifest's.}
@@ -46,9 +47,9 @@ zdd_invalid_argument <- function(arg, message, call = NULL) {
 }
 
 zdd_store_error <- function(message, hash = NA_character_, index = NA_integer_,
-                            call = NULL) {
+                            problem = NA_character_, call = NULL) {
   zdd_abort("zudedup_store_error", message, hash = hash, index = index,
-            call = call)
+            problem = problem, call = call)
 }
 
 zdd_algorithm_error <- function(message, call = NULL) {

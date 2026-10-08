@@ -14,5 +14,11 @@ The development version of the first release, 0.1.0 (this heading becomes
   (through zufast, the digest `xxhsum -H2` prints) is the default and is not
   cryptographic; `hash = "sha256"` uses zucrypt.
 
+* `dedup_store()` opens or creates a content-addressed store in a directory,
+  and `dedup_backend()` builds one from five functions of your own.
+  `dedup_put()` writes only the chunks a store lacks; `dedup_get()` reassembles
+  an object, refusing a missing or corrupt chunk; `dedup_has()`,
+  `dedup_missing()` and `dedup_delete()` act on digests.
+
 * `zudedup_info()` reports the build, the format constants and the hash
   algorithms available.

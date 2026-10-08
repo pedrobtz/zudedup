@@ -172,7 +172,7 @@ Reusable workflows from `pedrobtz/r-actions`; the scaffold's three exist at `@v1
 
 ## Stage 3 — The filesystem store and the backend interface · M
 
-**Status:** not started.
+**Status:** done 2026-10-08 ([#5](https://github.com/pedrobtz/zudedup/issues/5)).
 
 **Do**
 
@@ -186,6 +186,14 @@ Reusable workflows from `pedrobtz/r-actions`; the scaffold's three exist at `@v1
 
 - Every §8 behaviour has a test; `tools/run-mutation-check` passes and has been seen to fail.
 - A `dedup_backend()` built from five closures over an environment passes the same tests as the filesystem store (the interface is proven by a second instance).
+
+**What actually happened**
+
+- `tools/run-mutation-check` is R (`tools/mutation-check.R`): it parses each file, replaces the condition of every `# GUARD:` `if` with `FALSE` in the namespace `pkgload` loaded, and runs the one test named `GUARD name` (testthat's `desc =`), which must pass first and fail after. On its first run it failed on five guards, so it has been seen to fail: `chunk-missing` (the length check raised the same class), which led to the `problem` field (`"missing"` or `"corrupt"`) on `zudedup_store_error`; `fields`, `params` and `hashes-type`, which later guards subsume and which are now plain checks; and `chunk-oversize`, which saves memory but changes no outcome and is now documented defence in depth. Seventeen guards are load-bearing.
+- `dedup_store()` takes `hash`, `min`, `avg` and `max` for a new store; an existing store keeps its own, and only the settings a call gives are compared with them (by value, so `256L` matches 256).
+- `dedup_put()` has no `...`: the store fixes every chunking setting. `has()` answers are checked for shape (`has-shape`), since a wrong answer would skip chunks never written.
+- `jsonlite` joined `Imports` here, with its first use.
+- Every store test runs over both kinds through `local_store(kind)`.
 
 ---
 

@@ -12,23 +12,23 @@ test_that("GUARD class", {
   expect_bad(unclass(good_manifest()))
 })
 
-test_that("GUARD fields", {
+test_that("a manifest missing a field is refused", {
   m <- unclass(good_manifest())
   m$size <- NULL
   expect_bad(structure(m, class = "dedup_manifest"))
 })
 
-test_that("GUARD algorithm", {
+test_that("GUARD manifest-algorithm", {
   expect_bad(with_field(good_manifest(), "algorithm", "md5"))
   expect_bad(with_field(good_manifest(), "algorithm", c("xxh3", "xxh3")))
 })
 
-test_that("GUARD params", {
+test_that("a manifest with bad params is refused", {
   expect_bad(with_field(good_manifest(), "params", list(min = 64)))
   expect_bad(with_field(good_manifest(), "params", list(min = 64, avg = 300, max = 1024)))
 })
 
-test_that("GUARD hashes-type", {
+test_that("a manifest with non-character digests is refused", {
   m <- good_manifest()
   h <- m$hashes
   h[2] <- NA

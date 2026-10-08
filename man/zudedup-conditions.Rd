@@ -16,8 +16,9 @@ algorithm, or a backend without the function an operation needs. The
 condition carries \code{arg}, the argument at fault.}
 \item{\code{zudedup_store_error}}{A chunk is missing from a store, or its
 bytes do not hash to its name, or the store itself is unusable. The
-condition carries \code{hash}, the chunk's digest, and \code{index}, its
-1-based position in the manifest, where they apply.}
+condition carries \code{problem}, \code{"missing"} or \code{"corrupt"} for a chunk
+(\code{NA} otherwise); \code{hash}, the chunk's digest; and \code{index}, its 1-based
+position in the manifest, where they apply.}
 \item{\code{zudedup_algorithm_error}}{A manifest's hash algorithm or
 chunking parameters differ from the store's or from another
 manifest's.}

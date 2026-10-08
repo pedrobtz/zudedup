@@ -3,7 +3,8 @@
 #
 #   gates     project C warning-free under strict flags (tools/run-lint);
 #             the installed shared object exports only R_init_zudedup and
-#             no console or exit symbols (tools/check-symbols)
+#             no console or exit symbols (tools/check-symbols); every
+#             manifest and store guard is load-bearing (run-mutation-check)
 #   canary    fuzz_cdc built with a block-independence bug must crash
 #   fuzz      libFuzzer over the R-free chunker, from fuzz/seeds and a corpus
 #             cached between runs: 5 minutes per push, an hour nightly
@@ -26,7 +27,7 @@ concurrency:
 jobs:
   gates:
     runs-on: ubuntu-latest
-    name: lint, symbols
+    name: lint, symbols, mutation
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -37,11 +38,13 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           dependencies: '"hard"'
+          extra-packages: any::pkgload, any::testthat, any::withr
       - run: tools/run-lint
       - name: Install and check symbols
         run: |
           R CMD INSTALL --library="$RUNNER_TEMP" .
           CHECK_PLANT=1 tools/check-symbols "$RUNNER_TEMP/zudedup/libs/zudedup.so"
+      - run: tools/run-mutation-check
 
   canary:
     runs-on: ubuntu-latest

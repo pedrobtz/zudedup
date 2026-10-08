@@ -1,6 +1,6 @@
 # zudedup — Design
 
-**Status:** Draft, 2026-10-08. Adopted from [RFC 0006](https://github.com/pedrobtz/packages/blob/main/rfcs/0006-zudedup-content-defined-chunking.md) (2026-10-07) as the package's own specification. Stages 0–2 are implemented (the format constants of §6, the chunker, hashing and manifests); the roadmap's **Status:** lines say what else is. Every statement here is a decision; things not yet decided live in §18 and nowhere else. Amend this file in the same commit as the code that changes it. [roadmap.md](roadmap.md) sequences the work; its section references (§) point here.
+**Status:** Draft, 2026-10-08. Adopted from [RFC 0006](https://github.com/pedrobtz/packages/blob/main/rfcs/0006-zudedup-content-defined-chunking.md) (2026-10-07) as the package's own specification. Stages 0–3 are implemented (the format constants of §6, the chunker, hashing, manifests and the store); the roadmap's **Status:** lines say what else is. Every statement here is a decision; things not yet decided live in §18 and nowhere else. Amend this file in the same commit as the code that changes it. [roadmap.md](roadmap.md) sequences the work; its section references (§) point here.
 **Package:** `zudedup`
 **One line:** FastCDC content-defined chunking of byte streams, chunk hashing through `zufast`'s XXH3-128 (or `zucrypt`'s SHA-256), manifests, and a dumb content-addressed store with a backend interface, for `dastash` and for anyone versioning large binary objects in R.
 
@@ -120,8 +120,10 @@ dedup_manifest(x, ..., hash = c("xxh3", "sha256"))
 dedup_diff(a, b)                  # two manifests -> shared, added, removed
 
 # stores
-dedup_store(path, create = FALSE) # a filesystem store
-dedup_put(store, x, ...)          # -> manifest; writes missing chunks only
+dedup_store(path, create = FALSE, hash = c("xxh3", "sha256"),
+            min = 2048, avg = 8192, max = 65536)
+                                  # a filesystem store; the settings apply on creation
+dedup_put(store, x)               # -> manifest; writes missing chunks only
 dedup_get(store, manifest, file = NULL, verify = TRUE,
           max_chunks = 1e7, max_size = Inf)
                                   # -> raw, or writes to file
@@ -241,12 +243,12 @@ A backend also records what its chunks were made with: `hash`, `min`, `avg` and 
 
 ## 11. Errors
 
-Every condition inherits `zudedup_error`; tests assert on class, never on message text. C returns statuses by enumerator name and R raises (`zucbor`'s convention).
+Every condition inherits `zudedup_error`; tests assert on class, never on message text. A store error's `problem` is `"missing"` or `"corrupt"` for a chunk, so a caller can tell a lost chunk from a damaged one (added at Stage 3, when the mutation check showed the two were otherwise indistinguishable). C returns statuses by enumerator name and R raises (`zucbor`'s convention).
 
 ```text
 zudedup_error
 ├── zudedup_invalid_argument    parameters, a bad manifest, an unknown hash, a missing backend function
-├── zudedup_store_error         a missing or corrupt chunk; an unusable store   (hash, index)
+├── zudedup_store_error         a missing or corrupt chunk; an unusable store   (problem, hash, index)
 ├── zudedup_algorithm_error     a manifest's algorithm or params do not match the store's
 ├── zudedup_io_error            a connection or file could not be read or written
 └── zudedup_limit_error         a limit of §12 was reached                       (limit, limit_value)
@@ -262,9 +264,9 @@ The chunker reads bytes and computes a hash; it cannot be made to allocate by it
 |---|---|---|
 | `max_chunks` | 1e7 | a manifest's length, before any read |
 | `max_size` | `Inf` | a manifest's `size`, before allocation in memory |
-| chunk length | `max` | a chunk file longer than the store's `max` is corrupt |
+| chunk length | `max` | a chunk file longer than the store's `max` is corrupt, refused before it is read (defence in depth: the length check refuses its bytes anyway) |
 
-`max_size` does not apply when `file =` is given. A manifest is validated whole before any chunk is read: digests are hex of the algorithm's length, lengths are within `[1, max]` (the last may be shorter), and their sum is `size`. A chunk whose bytes do not hash to its name is refused, so a store cannot substitute content. Each guard carries a `/* GUARD: name */` marker (or its R-side equivalent, a named test) and `tools/run-mutation-check` proves it load-bearing.
+`max_size` does not apply when `file =` is given. A manifest is validated whole before any chunk is read: digests are hex of the algorithm's length, lengths are within `[1, max]` (the last may be shorter), and their sum is `size`. A chunk whose bytes do not hash to its name is refused, so a store cannot substitute content. Each guard carries a `# GUARD: name` marker on its `if` line in `R/` and a test named `GUARD name`; `tools/run-mutation-check` replaces each condition with `FALSE` in the loaded namespace and requires that test to fail. A check that a later guard subsumes carries no marker: it is there for a clearer message.
 
 ---
 

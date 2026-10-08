@@ -13,7 +13,7 @@ It is a member of the `zu*` family (sibling checkouts in `../`): an *engine* pac
 
 ## Current state
 
-**2026-10-08: Stages 0–2 done.** The format constants are committed (`src/zdd_gear.h`; the boundary rule is design D14, Python `fastcdc` 1.7.0's exactly); `dedup_chunk()` and `dedup_manifest()` chunk and hash (XXH3-128 in C, SHA-256 through zucrypt) over raw, connection or path, block-independently; `boundaries.tsv`, `boundaries-small.tsv` and `hash-reference.tsv` are the gates; the fuzzer, lint and symbol gates run in `hardening.yaml`. Stage 3 adds the store and the backend interface. Tracking: parent #1, stages #2–#8.
+**2026-10-08: Stages 0–3 done.** The format constants are committed (`src/zdd_gear.h`; the boundary rule is design D14, Python `fastcdc` 1.7.0's exactly); `dedup_chunk()` and `dedup_manifest()` chunk and hash (XXH3-128 in C, SHA-256 through zucrypt) block-independently; `dedup_store()`, `dedup_backend()`, `dedup_put()`, `dedup_get()`, `dedup_has()`, `dedup_missing()` and `dedup_delete()` make the store. Gates: `boundaries*.tsv`, `hash-reference.tsv`, the fuzzer with its canary, lint, symbols and the mutation check (`hardening.yaml`). Stage 4 adds diff, gc and verify. Tracking: parent #1, stages #2–#8.
 
 Update this paragraph at the end of every stage.
 
@@ -60,7 +60,7 @@ tools/run-fuzz [secs]          # canary first, then fuzz_cdc (block independence
                                # macOS: FUZZ_CC=/opt/homebrew/opt/llvm/bin/clang
 tools/run-lint                 # -Wall -Wextra -Wpedantic -Wshadow -Werror on project C
 tools/check-symbols <so>       # only R_init_zudedup exported; no stdio/abort/exit/assert
-tools/run-mutation-check       # Stage 3: every manifest and store guard seen to be load-bearing
+tools/run-mutation-check       # every R `# GUARD:` seen to be load-bearing (needs pkgload, testthat)
 tools/run-conformance          # Stage 5: Python fastcdc with our table agrees on every fixture (CI only)
 tools/run-benchmarks           # Stage 5: chunk throughput, hashing, put vs writeBin; not a CI gate
 ```
@@ -95,7 +95,7 @@ The pipeline is: R reads blocks (1 MiB from a connection, or the whole raw vecto
 - **The chunker contains no R.** `zdd_cdc.c` never includes `R.h`; the fuzz build (`-DZDD_STANDALONE`) compiles it standalone.
 - **Chunker state crosses `.Call` as a raw vector**, never as an external pointer: there is nothing to finalize, so an interrupt between blocks leaks nothing. All scratch is `R_alloc()`ed.
 - **The digest rendering is `high` then `low`**, lower-case hex (design §7, D12); `fixtures/hash-reference.tsv` pins it against libxxhash. The seed is 0.
-- **A manifest is validated whole before any chunk is read** (design §12): hex lengths, chunk lengths in `[1, max]`, sum equals `size`, `max_chunks`. Guards carry `/* GUARD */` markers or named tests, and `tools/run-mutation-check` proves each.
+- **A manifest is validated whole before any chunk is read** (design §12): hex lengths, chunk lengths in `[1, max]`, sum equals `size`, `max_chunks`. Guards carry `# GUARD: name` markers on their `if` lines and a `test_that("GUARD name")` each; `tools/run-mutation-check` proves each.
 - **A chunk whose bytes do not hash to its name is refused**, always, unless `verify = FALSE` was asked for; a store must not be able to substitute content.
 - **`dedup_put()` writes to `tmp/` and renames**; a chunk is complete or absent. Never write into `objects/` directly.
 - **The backend interface is the contract other packages hold** (design §9). Five functions, those signatures. Additions are fine; changes need a design decision.

@@ -13,6 +13,14 @@ reference:
     contents:
       - dedup_chunk
       - dedup_manifest
+  - title: Stores
+    contents:
+      - dedup_store
+      - dedup_backend
+      - dedup_put
+      - dedup_get
+      - dedup_has
+      - dedup_delete
   - title: About
     contents:
       - zudedup_info

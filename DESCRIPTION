@@ -17,6 +17,8 @@ URL: https://pedrobtz.github.io/zudedup/, https://github.com/pedrobtz/zudedup
 BugReports: https://github.com/pedrobtz/zudedup/issues
 Depends: 
     R (>= 4.1)
+Imports: 
+    jsonlite
 LinkingTo: 
     zufast (>= 0.1.0)
 Suggests: 
