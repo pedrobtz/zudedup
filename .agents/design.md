@@ -1,6 +1,6 @@
 # zudedup — Design
 
-**Status:** Draft, 2026-10-08. Adopted from [RFC 0006](https://github.com/pedrobtz/packages/blob/main/rfcs/0006-zudedup-content-defined-chunking.md) (2026-10-07) as the package's own specification. Stage 0 is implemented (the format constants of §6 are committed); the roadmap's **Status:** lines say what else is. Every statement here is a decision; things not yet decided live in §18 and nowhere else. Amend this file in the same commit as the code that changes it. [roadmap.md](roadmap.md) sequences the work; its section references (§) point here.
+**Status:** Draft, 2026-10-08. Adopted from [RFC 0006](https://github.com/pedrobtz/packages/blob/main/rfcs/0006-zudedup-content-defined-chunking.md) (2026-10-07) as the package's own specification. Stages 0–2 are implemented (the format constants of §6, the chunker, hashing and manifests); the roadmap's **Status:** lines say what else is. Every statement here is a decision; things not yet decided live in §18 and nowhere else. Amend this file in the same commit as the code that changes it. [roadmap.md](roadmap.md) sequences the work; its section references (§) point here.
 **Package:** `zudedup`
 **One line:** FastCDC content-defined chunking of byte streams, chunk hashing through `zufast`'s XXH3-128 (or `zucrypt`'s SHA-256), manifests, and a dumb content-addressed store with a backend interface, for `dastash` and for anyone versioning large binary objects in R.
 
@@ -113,7 +113,7 @@ The chunker is R-free behind `zdd_check.h`, builds with `-DZDD_STANDALONE`, and 
 
 ```r
 # chunking
-dedup_chunk(x, min = 2048, avg = 8192, max = 65536)
+dedup_chunk(x, min = 2048, avg = 8192, max = 65536, hash = c("xxh3", "sha256"))
                                   # raw, connection or path -> data frame of offset, length, hash
 dedup_manifest(x, ..., hash = c("xxh3", "sha256"))
                                   # raw, connection or path -> dedup_manifest

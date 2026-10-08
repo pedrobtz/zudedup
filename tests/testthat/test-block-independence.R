@@ -1,9 +1,5 @@
 # Design section 6.3: the boundaries do not depend on how the bytes arrive.
 
-ends_in_blocks <- function(x, block, p) {
-  zdd_chunk_ends(x, zdd_check_params(p$min, p$avg, p$max), block = block)
-}
-
 test_that("raw input split into blocks gives the same boundaries", {
   x <- fixture_bytes()
   for (p in fixture_params) {
@@ -43,5 +39,5 @@ test_that("a file path gives the same table as its bytes", {
   x <- fixture_bytes()
   path <- withr::local_tempfile()
   writeBin(x, path)
-  expect_identical(dedup_chunk(path), read_boundaries("boundaries.tsv"))
+  expect_identical(no_hash(dedup_chunk(path)), read_boundaries("boundaries.tsv"))
 })

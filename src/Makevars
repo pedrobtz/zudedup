@@ -10,4 +10,5 @@ PKG_CFLAGS = $(C_VISIBILITY)
 OBJECTS = \
 	init.o \
 	zdd_cdc.o \
+	zdd_hash.o \
 	zdd_r.o

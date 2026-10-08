@@ -12,6 +12,10 @@ reference:
   - title: Chunking
     contents:
       - dedup_chunk
+      - dedup_manifest
+  - title: About
+    contents:
+      - zudedup_info
   - title: Conditions
     contents:
       - zudedup-conditions

@@ -4,7 +4,7 @@
 \alias{dedup_chunk}
 \title{Split bytes into content-defined chunks}
 \usage{
-dedup_chunk(x, min = 2048, avg = 8192, max = 65536)
+dedup_chunk(x, min = 2048, avg = 8192, max = 65536, hash = c("xxh3", "sha256"))
 }
 \arguments{
 \item{x}{A raw vector, a connection, or the path of a file. A connection
@@ -17,12 +17,16 @@ except the last, none is longer than \code{max}, and the mean is close to
 \code{avg}, which must be a power of two. \code{min} is in [64, 2^26], \code{avg}
 in [256, 2^28] and \code{max} in [1024, 2^30], with
 \verb{min <= avg <= max}.}
+
+\item{hash}{The digest of each chunk: \code{"xxh3"} (XXH3-128, 32 hex
+characters, the default) or \code{"sha256"} (64 hex characters, needs the
+zucrypt package).}
 }
 \value{
 A data frame with one row per chunk, in order: \code{offset}, the
 0-based position of its first byte (a double, since inputs may exceed
-2^31 bytes), and \code{length}, its size in bytes (an integer). An empty
-input has no chunks.
+2^31 bytes), \code{length}, its size in bytes (an integer), and \code{hash}, its
+digest in lower-case hex. An empty input has no chunks.
 }
 \description{
 Finds chunk boundaries with FastCDC: a gear rolling hash over the bytes,
@@ -32,16 +36,22 @@ the chunks around it and leaves the rest alone. The same bytes give the
 same chunks on every platform and in every version of zudedup, however
 they are read.
 }
+\details{
+The default hash, XXH3-128, is fast and not cryptographic: an adversary
+who chooses content can make two chunks with the same digest. Use
+\code{hash = "sha256"} where that matters.
+}
 \examples{
 x <- as.raw(sample(0:255, 200000, replace = TRUE))
 chunks <- dedup_chunk(x)
 head(chunks)
 sum(chunks$length) == length(x)
 
-# An insertion near the start leaves the later boundaries in place.
+# An insertion near the start leaves the later chunks in place.
 y <- c(as.raw(1:100), x)
-tail(dedup_chunk(y)$offset - 100) \%in\% dedup_chunk(x)$offset
+mean(dedup_chunk(y)$hash \%in\% chunks$hash)
 }
 \seealso{
+\code{\link[=dedup_manifest]{dedup_manifest()}} for the chunk digests with the object's own;
 \link{zudedup-conditions} for the errors raised.
 }

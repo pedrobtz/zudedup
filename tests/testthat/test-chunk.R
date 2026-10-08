@@ -10,7 +10,8 @@ test_that("chunk tables tile the input within the size bounds", {
 
 test_that("an empty input has no chunks", {
   t <- dedup_chunk(raw())
-  expect_identical(t, data.frame(offset = numeric(), length = integer()))
+  expect_identical(t, data.frame(offset = numeric(), length = integer(),
+                                 hash = character()))
   con <- rawConnection(raw())
   on.exit(close(con))
   expect_identical(dedup_chunk(con), t)
@@ -19,7 +20,7 @@ test_that("an empty input has no chunks", {
 test_that("an input no longer than min is one chunk", {
   for (n in c(1, 100, 2048)) {
     x <- splitmix_bytes(n, "9")
-    expect_identical(dedup_chunk(x), data.frame(offset = 0, length = as.integer(n)))
+    expect_identical(no_hash(dedup_chunk(x)), data.frame(offset = 0, length = as.integer(n)))
   }
 })
 
@@ -84,11 +85,11 @@ test_that("bad inputs are refused", {
 })
 
 test_that("C refuses parameters and states the R checks would catch", {
-  r <- .Call(zudedup_cdc_init, 64, 300, 1024)
+  r <- .Call(zudedup_cdc_init, 64, 300, 1024, TRUE)
   expect_identical(r$status, "ZDD_ERR_PARAMS")
   r <- .Call(zudedup_cdc_feed, as.raw(1:10), raw(5))
   expect_identical(r$status, "ZDD_ERR_STATE")
-  ok <- .Call(zudedup_cdc_init, 64, 256, 1024)$state
+  ok <- .Call(zudedup_cdc_init, 64, 256, 1024, TRUE)$state
   bad <- ok
   bad[1] <- as.raw(0)
   expect_identical(.Call(zudedup_cdc_feed, bad, raw(5))$status, "ZDD_ERR_STATE")
