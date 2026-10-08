@@ -56,8 +56,9 @@ condition carries <code>arg</code>, the argument at fault.</p></dd>
 <dt><code>zudedup_store_error</code></dt>
 <dd><p>A chunk is missing from a store, or its
 bytes do not hash to its name, or the store itself is unusable. The
-condition carries <code>hash</code>, the chunk's digest, and <code>index</code>, its
-1-based position in the manifest, where they apply.</p></dd>
+condition carries <code>problem</code>, <code>"missing"</code> or <code>"corrupt"</code> for a chunk
+(<code>NA</code> otherwise); <code>hash</code>, the chunk's digest; and <code>index</code>, its 1-based
+position in the manifest, where they apply.</p></dd>
 
 <dt><code>zudedup_algorithm_error</code></dt>
 <dd><p>A manifest's hash algorithm or

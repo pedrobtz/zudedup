@@ -16,8 +16,9 @@ Every class below inherits from `zudedup_error`.
 - `zudedup_store_error`:
 
   A chunk is missing from a store, or its bytes do not hash to its name,
-  or the store itself is unusable. The condition carries `hash`, the
-  chunk's digest, and `index`, its 1-based position in the manifest,
+  or the store itself is unusable. The condition carries `problem`,
+  `"missing"` or `"corrupt"` for a chunk (`NA` otherwise); `hash`, the
+  chunk's digest; and `index`, its 1-based position in the manifest,
   where they apply.
 
 - `zudedup_algorithm_error`:

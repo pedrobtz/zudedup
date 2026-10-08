@@ -19,6 +19,20 @@ becomes `# zudedup 0.1.0` when it is submitted).
   digest. XXH3-128 (through zufast, the digest `xxhsum -H2` prints) is
   the default and is not cryptographic; `hash = "sha256"` uses zucrypt.
 
+- [`dedup_store()`](https://pedrobtz.github.io/zudedup/reference/dedup_store.md)
+  opens or creates a content-addressed store in a directory, and
+  [`dedup_backend()`](https://pedrobtz.github.io/zudedup/reference/dedup_backend.md)
+  builds one from five functions of your own.
+  [`dedup_put()`](https://pedrobtz.github.io/zudedup/reference/dedup_put.md)
+  writes only the chunks a store lacks;
+  [`dedup_get()`](https://pedrobtz.github.io/zudedup/reference/dedup_get.md)
+  reassembles an object, refusing a missing or corrupt chunk;
+  [`dedup_has()`](https://pedrobtz.github.io/zudedup/reference/dedup_has.md),
+  [`dedup_missing()`](https://pedrobtz.github.io/zudedup/reference/dedup_has.md)
+  and
+  [`dedup_delete()`](https://pedrobtz.github.io/zudedup/reference/dedup_delete.md)
+  act on digests.
+
 - [`zudedup_info()`](https://pedrobtz.github.io/zudedup/reference/zudedup_info.md)
   reports the build, the format constants and the hash algorithms
   available.
