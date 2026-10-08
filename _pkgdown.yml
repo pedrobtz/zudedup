@@ -9,6 +9,9 @@ development:
   mode: auto
 
 reference:
+  - title: Chunking
+    contents:
+      - dedup_chunk
   - title: Conditions
     contents:
       - zudedup-conditions

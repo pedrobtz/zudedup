@@ -1,0 +1,67 @@
+# Roadmap Stage 1: the gates that keep the C honest. Each was seen to fail on
+# a planted defect before it was trusted.
+#
+#   gates     project C warning-free under strict flags (tools/run-lint);
+#             the installed shared object exports only R_init_zudedup and
+#             no console or exit symbols (tools/check-symbols)
+#   canary    fuzz_cdc built with a block-independence bug must crash
+#   fuzz      libFuzzer over the R-free chunker, from fuzz/seeds and a corpus
+#             cached between runs: 5 minutes per push, an hour nightly
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  schedule:
+    - cron: "41 2 * * *"
+  workflow_dispatch:
+
+name: hardening
+
+permissions: read-all
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    name: lint, symbols
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          dependencies: '"hard"'
+      - run: tools/run-lint
+      - name: Install and check symbols
+        run: |
+          R CMD INSTALL --library="$RUNNER_TEMP" .
+          CHECK_PLANT=1 tools/check-symbols "$RUNNER_TEMP/zudedup/libs/zudedup.so"
+
+  canary:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install clang with libFuzzer
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q clang
+          v=$(clang -dumpversion | cut -d. -f1)
+          sudo apt-get install -y -q "libclang-rt-$v-dev" || true
+      - name: The canary crashes
+        run: CANARY_ONLY=1 tools/run-fuzz
+
+  fuzz:
+    uses: pedrobtz/r-actions/.github/workflows/fuzz.yml@bdfde5edd37f25b33af142a4a881585e77bda3c2 # v1.22.0
+    with:
+      harness: fuzz/fuzz_cdc.c
+      sources: src/zdd_cdc.c
+      cflags: -g -O1 -fno-omit-frame-pointer -fno-sanitize-recover=undefined -UNDEBUG -DZDD_STANDALONE -Isrc
+      seed-corpus: fuzz/seeds
+      libfuzzer-args: -max_len=65536
+      max-total-time: ${{ github.event_name == 'schedule' && 3600 || 300 }}

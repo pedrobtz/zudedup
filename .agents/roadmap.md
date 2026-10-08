@@ -111,7 +111,7 @@ Reusable workflows from `pedrobtz/r-actions`; the scaffold's three exist at `@v1
 
 ## Stage 1 — The chunker, block independence, fuzzing · M
 
-**Status:** not started.
+**Status:** done 2026-10-08 ([#3](https://github.com/pedrobtz/zudedup/issues/3)).
 
 **Goal:** `dedup_chunk()` returns the same chunk table for the same bytes however they arrive, and the boundary fixture is committed.
 
@@ -131,6 +131,14 @@ Reusable workflows from `pedrobtz/r-actions`; the scaffold's three exist at `@v1
 - `boundaries.tsv` reproduces on every CI platform; block independence holds for every fixture and under the fuzzer for the PR budget; the canary has crashed.
 - No chunk under `min`, none over `max` except the last, mean within 10 % of `avg`.
 - Sanitizers, valgrind, rchk and gctorture clean.
+
+**What actually happened**
+
+- The fixture boundaries were checked against Python `fastcdc` 1.7.0 (`fastcdc_py.fastcdc_py()` with `GEAR` replaced) before they were committed: 494 chunks at the defaults and 16,135 at the smallest parameters (64, 256, 1024), identical. Both tables are committed (`boundaries.tsv`, `boundaries-small.tsv`); the small one exercises thirty times as many cuts.
+- `dedup_chunk()` also takes a path, through `R/zu_source.R`, copied from zuxml here rather than at Stage 2.
+- Block size 1 runs over a 150 KB prefix of the fixture, not all 4 MiB (four million `.Call`s); the fuzzer covers arbitrary splits.
+- The fuzz canary is the same harness with a real block-independence bug compiled in (the hash forgotten at each block edge), so its crash proves the comparison detects the fault it exists for.
+- `tools/check-symbols` also checks that `R_init_zudedup` is the only exported symbol, and proves both checks against a planted object.
 
 ---
 

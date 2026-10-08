@@ -27,6 +27,11 @@
 #' }
 #'
 #' @name zudedup-conditions
+#' @examples
+#' tryCatch(
+#'   dedup_chunk(raw(10), avg = 5000),
+#'   zudedup_invalid_argument = function(e) e$arg
+#' )
 NULL
 
 zdd_abort <- function(class, message, ..., call = NULL) {
@@ -57,4 +62,16 @@ zdd_io_error <- function(message, call = NULL) {
 zdd_limit_error <- function(limit, limit_value, message, call = NULL) {
   zdd_abort("zudedup_limit_error", message, limit = limit,
             limit_value = limit_value, call = call)
+}
+
+# A status name from C -> a condition, by the enumerator's name. Statuses that
+# only misuse of the internal API can cause map to the bare zudedup_error:
+# still catchable, never mistaken for a fault in the input.
+zdd_raise_status <- function(status, call = NULL) {
+  switch(status,
+    ZDD_ERR_PARAMS = zdd_invalid_argument(
+      "avg", "chunking parameters out of range", call = call),
+    zdd_abort(character(), paste0("internal error: ", status), status = status,
+              call = call)
+  )
 }

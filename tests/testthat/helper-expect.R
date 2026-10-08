@@ -17,3 +17,31 @@ expect_zudedup_error <- function(expr, class, ...) {
   }
   invisible(e)
 }
+
+# The parameters of the committed boundary fixtures.
+fixture_params <- list(
+  default = list(min = 2048, avg = 8192, max = 65536, file = "boundaries.tsv"),
+  small = list(min = 64, avg = 256, max = 1024, file = "boundaries-small.tsv")
+)
+
+# The chunk table of a fixture, as committed.
+read_boundaries <- function(file) {
+  t <- utils::read.delim(test_path("fixtures", file), colClasses = "character")
+  data.frame(offset = as.numeric(t$offset), length = as.integer(t$length))
+}
+
+# dedup_chunk()'s table for x is `table`, row for row.
+expect_chunks <- function(x, table, ...) {
+  expect_identical(dedup_chunk(x, ...), table)
+}
+
+# The invariants every chunk table has (design section 6.2): chunks tile the
+# input, none is longer than max, and every chunk but the last is longer
+# than min.
+expect_valid_chunks <- function(table, size, min, max) {
+  n <- nrow(table)
+  expect_identical(sum(as.numeric(table$length)), as.numeric(size))
+  expect_identical(table$offset, cumsum(c(0, as.numeric(table$length)))[seq_len(n)])
+  expect_true(all(table$length <= max))
+  if (n > 1) expect_true(all(table$length[-n] > min | table$length[-n] == max))
+}
