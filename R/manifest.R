@@ -7,7 +7,7 @@
 #' chunk, the object's size and the digest of the whole object. Two objects
 #' whose manifests have the same `hashes` have the same bytes, up to the
 #' strength of the hash; two versions of an object share the digests of the
-#' chunks they share.
+#' chunks they share, which [dedup_diff()] measures.
 #'
 #' The default hash, XXH3-128, is fast and not cryptographic: an adversary
 #' who chooses content can make two chunks with the same digest. Use
@@ -25,7 +25,7 @@
 #'
 #'   It prints as a summary; [as.data.frame()] gives the chunk table and
 #'   [length()] the number of chunks.
-#' @seealso [dedup_chunk()] for the chunk table alone.
+#' @seealso [dedup_put()] to store an object, [dedup_diff()] to compare two.
 #' @export
 #' @examples
 #' x <- serialize(mtcars, NULL)

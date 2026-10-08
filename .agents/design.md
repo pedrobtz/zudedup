@@ -1,6 +1,6 @@
 # zudedup — Design
 
-**Status:** Draft, 2026-10-08. Adopted from [RFC 0006](https://github.com/pedrobtz/packages/blob/main/rfcs/0006-zudedup-content-defined-chunking.md) (2026-10-07) as the package's own specification. Stages 0–3 are implemented (the format constants of §6, the chunker, hashing, manifests and the store); the roadmap's **Status:** lines say what else is. Every statement here is a decision; things not yet decided live in §18 and nowhere else. Amend this file in the same commit as the code that changes it. [roadmap.md](roadmap.md) sequences the work; its section references (§) point here.
+**Status:** Draft, 2026-10-08. Adopted from [RFC 0006](https://github.com/pedrobtz/packages/blob/main/rfcs/0006-zudedup-content-defined-chunking.md) (2026-10-07) as the package's own specification. Stages 0–4 are implemented (every function of §5); the roadmap's **Status:** lines say what else is. Every statement here is a decision; things not yet decided live in §18 and nowhere else. Amend this file in the same commit as the code that changes it. [roadmap.md](roadmap.md) sequences the work; its section references (§) point here.
 **Package:** `zudedup`
 **One line:** FastCDC content-defined chunking of byte streams, chunk hashing through `zufast`'s XXH3-128 (or `zucrypt`'s SHA-256), manifests, and a dumb content-addressed store with a backend interface, for `dastash` and for anyone versioning large binary objects in R.
 
@@ -130,8 +130,8 @@ dedup_get(store, manifest, file = NULL, verify = TRUE,
 dedup_has(store, hashes)          # logical
 dedup_missing(store, manifest)    # the hashes a put would write
 dedup_delete(store, hashes)
-dedup_verify(store)               # every chunk's bytes hash to its name
-dedup_gc(store, keep)             # delete chunks not in any kept manifest
+dedup_verify(store)               # -> the digests whose bytes do not hash to their name
+dedup_gc(store, keep)             # delete chunks not in any kept manifest (a manifest or a list)
 
 # backends
 dedup_backend(has, get, put, delete = NULL, list = NULL,
@@ -294,7 +294,7 @@ The chunker reads bytes and computes a hash; it cannot be made to allocate by it
 - **Cross-implementation.** In the `conformance` job, Python's `fastcdc` package (pinned at 1.7.0, `fastcdc_py.fastcdc_py()`) with `zudedup`'s gear table substituted must produce the same boundaries on the fixture and on every file under `tests/testthat/fixtures/`.
 - **Block independence as a property**: every fixture chunked in block sizes 1, 7, 4096, 65536 and 1 MiB, and as one raw vector, gives the same chunk table.
 - **Size distribution**: over 100 MB of random bytes, no chunk under `min`, none over `max`, the mean within 10 % of `avg`.
-- **Dedup as a property**: a 10 MB object with 1 % of its bytes changed at 100 random points shares at least 95 % of its bytes with the original, measured by `dedup_diff()`.
+- **Dedup as a property**: a 10 MB object with 1 % of its bytes changed at 100 random points shares at least 85 % of its bytes with the original, measured by `dedup_diff()`. (The RFC asked for 95 %, which 8 KiB chunks cannot give: each scattered edit costs about one chunk, and the chunk a random point falls in is size-biased, about 11 KB, so 100 edits lose about 11 % whatever their size. Measured at Stage 4: 0.889–0.896 over three draws.)
 - **The store**: put, get, verify, gc, missing and delete over temporary directories; a corrupted chunk file is refused on get; a crash simulated by a leftover `tmp/` file is cleaned by gc; two processes putting the same object (via `callr`) leave one copy.
 - **Hashes against references**: XXH3-128 digests compared with `xxhsum` on the fixtures (pinned once, so the suite needs no `xxhsum`); SHA-256 with `openssl` when `zucrypt` is installed.
 - **The chunker is fuzzed** under ASan and UBSan with the block-independence invariant (the fuzzer splits its input at random points and compares); `fuzz_canary` must crash first.

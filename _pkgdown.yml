@@ -13,6 +13,7 @@ reference:
     contents:
       - dedup_chunk
       - dedup_manifest
+      - dedup_diff
   - title: Stores
     contents:
       - dedup_store
@@ -21,6 +22,8 @@ reference:
       - dedup_get
       - dedup_has
       - dedup_delete
+      - dedup_verify
+      - dedup_gc
   - title: About
     contents:
       - zudedup_info

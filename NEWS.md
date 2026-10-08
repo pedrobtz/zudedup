@@ -20,5 +20,9 @@ The development version of the first release, 0.1.0 (this heading becomes
   an object, refusing a missing or corrupt chunk; `dedup_has()`,
   `dedup_missing()` and `dedup_delete()` act on digests.
 
+* `dedup_diff()` measures what two versions share; `dedup_verify()` names
+  the corrupt chunks in a store; `dedup_gc()` deletes the chunks no kept
+  manifest needs, and partial writes an interrupted put left behind.
+
 * `zudedup_info()` reports the build, the format constants and the hash
   algorithms available.

@@ -13,7 +13,7 @@ It is a member of the `zu*` family (sibling checkouts in `../`): an *engine* pac
 
 ## Current state
 
-**2026-10-08: Stages 0–3 done.** The format constants are committed (`src/zdd_gear.h`; the boundary rule is design D14, Python `fastcdc` 1.7.0's exactly); `dedup_chunk()` and `dedup_manifest()` chunk and hash (XXH3-128 in C, SHA-256 through zucrypt) block-independently; `dedup_store()`, `dedup_backend()`, `dedup_put()`, `dedup_get()`, `dedup_has()`, `dedup_missing()` and `dedup_delete()` make the store. Gates: `boundaries*.tsv`, `hash-reference.tsv`, the fuzzer with its canary, lint, symbols and the mutation check (`hardening.yaml`). Stage 4 adds diff, gc and verify. Tracking: parent #1, stages #2–#8.
+**2026-10-08: Stages 0–4 done.** Every function of design §5 exists: `dedup_chunk()`, `dedup_manifest()`, `dedup_diff()`; `dedup_store()`, `dedup_backend()`, `dedup_put()`, `dedup_get()`, `dedup_has()`, `dedup_missing()`, `dedup_delete()`, `dedup_verify()`, `dedup_gc()`; `zudedup_info()`. The boundary rule is design D14 (Python `fastcdc` 1.7.0's exactly). Gates: `boundaries*.tsv`, `hash-reference.tsv`, the fuzzer with its canary, lint, symbols, the mutation check, and the two-process test. Stage 5 adds the Python conformance job, benchmarks and the documentation. Tracking: parent #1, stages #2–#8.
 
 Update this paragraph at the end of every stage.
 

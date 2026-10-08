@@ -35,7 +35,7 @@ Chunks an object and records, in order, the digest and length of every
 chunk, the object's size and the digest of the whole object. Two objects
 whose manifests have the same \code{hashes} have the same bytes, up to the
 strength of the hash; two versions of an object share the digests of the
-chunks they share.
+chunks they share, which \code{\link[=dedup_diff]{dedup_diff()}} measures.
 }
 \details{
 The default hash, XXH3-128, is fast and not cryptographic: an adversary
@@ -49,5 +49,5 @@ m
 head(as.data.frame(m))
 }
 \seealso{
-\code{\link[=dedup_chunk]{dedup_chunk()}} for the chunk table alone.
+\code{\link[=dedup_put]{dedup_put()}} to store an object, \code{\link[=dedup_diff]{dedup_diff()}} to compare two.
 }
