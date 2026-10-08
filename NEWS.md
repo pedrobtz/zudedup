@@ -24,5 +24,8 @@ The development version of the first release, 0.1.0 (this heading becomes
   the corrupt chunks in a store; `dedup_gc()` deletes the chunks no kept
   manifest needs, and partial writes an interrupted put left behind.
 
+* A vignette, *Versioning large objects with zudedup*, walks through two
+  versions of a data frame, a store and garbage collection.
+
 * `zudedup_info()` reports the build, the format constants and the hash
   algorithms available.

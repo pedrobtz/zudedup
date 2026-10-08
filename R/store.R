@@ -91,7 +91,9 @@ zdd_describe <- function(x) {
 }
 
 zdd_create_store <- function(path, hash, params) {
-  for (d in file.path(path, c("", "objects", "tmp"))) {
+  # The 256 prefix directories are made once, here, so a put need not ask.
+  prefixes <- file.path("objects", sprintf("%02x", 0:255))
+  for (d in file.path(path, c("", "objects", "tmp", prefixes))) {
     if (!dir.exists(d) && !dir.create(d, recursive = TRUE, showWarnings = FALSE)) {
       zdd_io_error(sprintf("could not create %s", d))
     }
@@ -156,12 +158,15 @@ zdd_fs_backend <- function(path, hash, params) {
       unlink(tmp)
       zdd_io_error(sprintf("could not write chunk %s", hash))
     }
-    dir.create(dirname(dest), showWarnings = FALSE)
     # A rename onto a chunk that already exists, which two concurrent puts of
-    # the same bytes cause, is success: the files are identical.
+    # the same bytes cause, is success: the files are identical. The prefix
+    # directory exists unless someone removed it; then it is made again.
     if (!suppressWarnings(file.rename(tmp, dest))) {
-      unlink(tmp)
-      if (!file.exists(dest)) zdd_io_error(sprintf("could not store chunk %s", hash))
+      dir.create(dirname(dest), showWarnings = FALSE)
+      if (!suppressWarnings(file.rename(tmp, dest))) {
+        unlink(tmp)
+        if (!file.exists(dest)) zdd_io_error(sprintf("could not store chunk %s", hash))
+      }
     }
     invisible()
   }

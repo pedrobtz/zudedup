@@ -1,6 +1,6 @@
 # zudedup — Design
 
-**Status:** Draft, 2026-10-08. Adopted from [RFC 0006](https://github.com/pedrobtz/packages/blob/main/rfcs/0006-zudedup-content-defined-chunking.md) (2026-10-07) as the package's own specification. Stages 0–4 are implemented (every function of §5); the roadmap's **Status:** lines say what else is. Every statement here is a decision; things not yet decided live in §18 and nowhere else. Amend this file in the same commit as the code that changes it. [roadmap.md](roadmap.md) sequences the work; its section references (§) point here.
+**Status:** Draft, 2026-10-08. Adopted from [RFC 0006](https://github.com/pedrobtz/packages/blob/main/rfcs/0006-zudedup-content-defined-chunking.md) (2026-10-07) as the package's own specification. Stages 0–5 are implemented (every function of §5, the conformance job, the benchmarks of §16 and the documentation); the roadmap's **Status:** lines say what else is. Every statement here is a decision; things not yet decided live in §18 and nowhere else. Amend this file in the same commit as the code that changes it. [roadmap.md](roadmap.md) sequences the work; its section references (§) point here.
 **Package:** `zudedup`
 **One line:** FastCDC content-defined chunking of byte streams, chunk hashing through `zufast`'s XXH3-128 (or `zucrypt`'s SHA-256), manifests, and a dumb content-addressed store with a backend interface, for `dastash` and for anyone versioning large binary objects in R.
 
@@ -304,7 +304,21 @@ The chunker reads bytes and computes a hash; it cannot be made to allocate by it
 
 ## 16. Performance targets
 
-Measured by `tools/run-benchmarks` and recorded here when Stage 5 runs them: chunking at not less than 1 GB/s on one core for the default parameters (FastCDC reports several GB/s in C), hashing at `zufast`'s XXH3 speed, and `dedup_put()` of a 1 GB object into an empty store within 2× the time of `writeBin()` of the same bytes. Benchmarks are not in CI.
+Measured by `tools/run-benchmarks`, not in CI. The targets were chunking at not less than 1 GB/s on one core for the default parameters, hashing at `zufast`'s XXH3 speed, and `dedup_put()` of a large object into an empty store within 2× the time of `writeBin()` of the same bytes.
+
+Measured at Stage 5 (2026-10-08; zudedup 0.0.0.9000, R 4.6.1, aarch64-apple-darwin23, 256 MB of random bytes, best of three):
+
+| | |
+|---|---|
+| chunking, boundaries only | 1.46 GB/s |
+| chunking with XXH3-128 per chunk | 1.23 GB/s |
+| XXH3-128 of the whole object | 33.6 GB/s |
+| `writeBin()` to a file | 0.18 s |
+| `dedup_put()` into an empty store (32,582 chunks) | 7.9 s, 44× `writeBin()`; 213 µs per chunk written |
+| `dedup_put()` again (every chunk present) | 0.94 s |
+| `dedup_get()` with verification | 3.6 s |
+
+The chunking target is met. The put target is not, and cannot be met by the filesystem store: it writes one file per chunk (about 125,000 per GB at the defaults), and the time is in creating, closing and renaming those files, not in chunking or hashing (an `Rprof()` of the put puts 75 % in `file()`, `close()` and `file.rename()`). `writeBin()` makes one file. A store that packs chunks into larger files, as restic and borg do, is a backend's job (§9) and is not in 0.1.0; for the filesystem store the figure to watch is the cost per chunk written. Creating the 256 prefix directories once, at store creation, rather than on each put, is the one change Stage 5 made for speed.
 
 ---
 
@@ -331,6 +345,9 @@ Measured by `tools/run-benchmarks` and recorded here when Stage 5 runs them: chu
 | D17 | Backend metadata | `hash`, `min`, `avg`, `max` are `dedup_backend()` arguments (§9) |
 | D18 | `has()` batching in `dedup_put()` | one call per block (§8) |
 | D19 | Gear table entries | SplitMix64 output shifted right one bit, below 2^63 (§6.1) |
+| D20 | Compression at rest (was §18 Q1) | not in 0.1.0; later, a store-level `compress =` recorded in the metadata file |
+| D21 | Manifest files (was §18 Q2) | not in 0.1.0; a manifest is an R list the caller keeps (dastash in mdbx); `dedup_manifest_write()` and `_read()` in JSON when asked |
+| D22 | Chunk-level encryption (was §18 Q3) | no; a backend that encrypts does so inside its `put` and `get` |
 
 Reasons where they are not in the section cited:
 
@@ -344,18 +361,13 @@ Reasons where they are not in the section cited:
 - **D17.** Without it, the algorithm check of §7 holds for the filesystem store and silently not for any other backend.
 - **D18.** One call for the whole object needs every digest before any write, which for a connection means holding the object.
 - **D19.** A full 64-bit table makes C's `uint64_t` wrap where Python's integers do not, and the two then disagree after the wrap reaches the low bits.
+- **D20–D22** are the RFC's recommendations, adopted at Stage 5 by default so that the release has no open question; each is the maintainer's to reopen. D20 and D21 add API, which is easier to add after 0.1.0 than to remove; D22 is already possible through the backend interface.
 
 ---
 
 ## 18. Open questions
 
-Each stays the maintainer's until recorded above; the recommendation is the RFC's unless marked otherwise.
-
-1. **Should `dedup_put()` compress chunks** with `zukomp` when it is installed? It halves most stores and costs CPU on every get. Recommended: not in 0.1.0; a store-level `compress =` setting recorded in the metadata file, later, so a store is consistent.
-2. **Manifest encoding on disk.** A manifest is an R list; dastash will keep it in mdbx. Should `zudedup` define a file format for it (JSON, or a `zubin` layout)? Recommended: JSON through the same dependency as the metadata file, as `dedup_manifest_write()` and `dedup_manifest_read()`, so manifests move between machines.
-3. **Chunk-level encryption** for remote backends. Recommended: no; a backend that encrypts does so inside its `put` and `get`, which the interface already allows.
-
-Q4 (mask placement) and Q5 (prior art on CRAN) were decided at Stage 0: D14 and §3.2.
+None. Q1–Q3 became D20–D22 at Stage 5, by the RFC's recommendations; Q4 and Q5 were decided at Stage 0 (D14 and §3.2). A new question goes here until it is decided.
 
 ---
 

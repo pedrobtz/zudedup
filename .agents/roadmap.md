@@ -218,12 +218,13 @@ Reusable workflows from `pedrobtz/r-actions`; the scaffold's three exist at `@v1
 - `dedup_gc()` accepts one manifest or a list, and empties `tmp/` only for a filesystem store; a backend's own partial writes are its business (D16 makes them its responsibility).
 - The two-process test runs each put in a `callr` background process; under `devtools::test()` the process loads the source with `pkgload`, under `R CMD check` the installed package. It is behind `skip_heavy()`, so it runs in CI's full profile and locally, not on CRAN.
 - `fixture_bytes()` is cached in the helper: generating 4 MiB of SplitMix64 in R is cheap natively and slow under valgrind, where Stage 1's PR spent most of its time.
+- CI taught three things. The two-process test's first Windows run outlasted a two-minute wait at eight thousand chunk files per writer; it now uses about a thousand and waits ten minutes. Valgrind, run long enough by the heavy tests, reported one possibly-lost block from cli's timer thread, suppressed by path in `tools/valgrind.supp`. And at Stage 2 gctorture timed out at two hours on R arithmetic over the 4 MiB fixture; `skip_under_torture()` skips the fixture-scale tests under `ZUDEDUP_SKIP_HEAVY`, which CRAN and the other legs still run, and the job's timeout is 240 minutes.
 
 ---
 
 ## Stage 5 — Conformance against Python `fastcdc`; benchmarks; docs · M
 
-**Status:** not started.
+**Status:** done 2026-10-08 ([#7](https://github.com/pedrobtz/zudedup/issues/7)).
 
 **Do**
 
@@ -235,6 +236,14 @@ Reusable workflows from `pedrobtz/r-actions`; the scaffold's three exist at `@v1
 **Exit**
 
 - Python `fastcdc` agrees on every fixture in CI; benchmarks recorded; `devtools::check(cran = TRUE)` 0/0/0; `pkgdown::check_pkgdown()` clean.
+
+**What actually happened**
+
+- `tools/run-conformance` compares 16 inputs (the fixture, every file under `fixtures/`, SplitMix64 streams of awkward sizes, zeros, a repeating pattern and CSV text) at 7 parameter sets with Python `fastcdc` 1.7.0, and every input and every fixture chunk with `xxhsum -H2`. `fastcdc_py.fastcdc_py()` runs unchanged with only `GEAR` replaced (D14). Locally all 112 boundary comparisons agreed; the `xxhsum` half runs in CI, where apt provides it.
+- The put target of §16 is not met and cannot be by a one-file-per-chunk store: 44× `writeBin()`, 213 µs per chunk written, almost all of it file creation and rename. §16 records the measurement and why; the chunking target (1 GB/s) is met at 1.46 GB/s. The benchmark's first version timed a promise once and reported infinite throughput; it now re-evaluates each repetition.
+- §18 Q1–Q3 were adopted as the RFC recommended (D20–D22), so §18 is empty; each is the maintainer's to reopen.
+- The CRAN-mode suite takes 7.9 s locally (budget 15 s); the heavy properties and the two-process test skip there.
+- A stuck `apt-get` held the hardening canary for an hour; its jobs now have timeouts (15 and 30 minutes) and apt a two-minute dpkg lock wait.
 
 ---
 
