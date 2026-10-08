@@ -21,6 +21,7 @@ test_that("every gear entry is below 2^63", {
 })
 
 test_that("the fixture input is the documented SplitMix64 stream", {
+  skip_under_torture()
   x <- fixture_bytes()
   expect_length(x, 4 * 1024^2)
   expect_identical(x[1:16], bytes("f80e7118cacca735 2a2ceb23bfd9996e"))

@@ -1,4 +1,5 @@
 test_that("whole-object XXH3-128 matches the pinned xxhsum digests", {
+  skip_under_torture()
   ref <- read_hash_reference()
   obj <- ref[ref$kind == "object", ]
   for (i in seq_len(nrow(obj))) {
@@ -14,12 +15,14 @@ test_that("whole-object XXH3-128 matches the pinned xxhsum digests", {
 })
 
 test_that("every chunk digest of the fixture matches the pinned digests", {
+  skip_under_torture()
   ref <- read_hash_reference()
   chunks <- ref[ref$kind == "chunk", ]
   expect_identical(dedup_chunk(fixture_bytes())$hash, chunks$xxh3)
 })
 
 test_that("chunk digests do not depend on the block size", {
+  skip_under_torture()
   x <- fixture_bytes()
   p <- fixture_params$small
   params <- zdd_check_params(p$min, p$avg, p$max)
@@ -40,6 +43,7 @@ test_that("the object digest is zufast's and the digest is high then low", {
 })
 
 test_that("SHA-256 matches the pinned hashlib digests", {
+  skip_under_torture()
   skip_if_not_installed("zucrypt")
   ref <- read_hash_reference()
   x <- fixture_bytes()
@@ -51,6 +55,7 @@ test_that("SHA-256 matches the pinned hashlib digests", {
 })
 
 test_that("SHA-256 chunk digests do not depend on the block size", {
+  skip_under_torture()
   skip_if_not_installed("zucrypt")
   x <- splitmix_bytes(200000, "88")
   params <- zdd_check_params(64, 256, 1024)

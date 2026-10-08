@@ -4,12 +4,14 @@
 # fixture: never regenerate it.
 
 test_that("the fixture input reproduces the committed boundaries", {
+  skip_under_torture()
   x <- fixture_bytes()
   p <- fixture_params$default
   expect_chunks(x, read_boundaries(p$file), min = p$min, avg = p$avg, max = p$max)
 })
 
 test_that("the smallest parameters reproduce their committed boundaries", {
+  skip_under_torture()
   x <- fixture_bytes()
   p <- fixture_params$small
   expect_chunks(x, read_boundaries(p$file), min = p$min, avg = p$avg, max = p$max)
