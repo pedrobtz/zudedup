@@ -33,3 +33,13 @@ Every class below inherits from `zudedup_error`.
 
   A limit was reached. The condition carries `limit`, the argument's
   name, such as `"max_chunks"`, and `limit_value`.
+
+## Examples
+
+``` r
+tryCatch(
+  dedup_chunk(raw(10), avg = 5000),
+  zudedup_invalid_argument = function(e) e$arg
+)
+#> [1] "avg"
+```
