@@ -27,6 +27,7 @@ concurrency:
 jobs:
   gates:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     name: lint, symbols, mutation
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -46,16 +47,19 @@ jobs:
           CHECK_PLANT=1 tools/check-symbols "$RUNNER_TEMP/zudedup/libs/zudedup.so"
       - run: tools/run-mutation-check
 
+  # A stuck apt-get once held this job for an hour: the timeouts make a
+  # runner hang fail fast instead of lasting the six-hour default.
   canary:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
       - name: Install clang with libFuzzer
         run: |
           sudo apt-get update -q
-          sudo apt-get install -y -q clang
+          sudo apt-get install -y -q -o DPkg::Lock::Timeout=120 clang
           v=$(clang -dumpversion | cut -d. -f1)
-          sudo apt-get install -y -q "libclang-rt-$v-dev" || true
+          sudo apt-get install -y -q -o DPkg::Lock::Timeout=120 "libclang-rt-$v-dev" || true
       - name: The canary crashes
         run: CANARY_ONLY=1 tools/run-fuzz
 
