@@ -45,12 +45,15 @@ dedup_backend(
 
   `function(hashes)`, optional: removes chunks; needed by
   [`dedup_delete()`](https://pedrobtz.github.io/zudedup/reference/dedup_delete.md)
-  and `dedup_gc()`.
+  and
+  [`dedup_gc()`](https://pedrobtz.github.io/zudedup/reference/dedup_gc.md).
 
 - list:
 
   `function()`, optional: the digests of every stored chunk; needed by
-  `dedup_verify()` and `dedup_gc()`.
+  [`dedup_verify()`](https://pedrobtz.github.io/zudedup/reference/dedup_verify.md)
+  and
+  [`dedup_gc()`](https://pedrobtz.github.io/zudedup/reference/dedup_gc.md).
 
 - hash, min, avg, max:
 

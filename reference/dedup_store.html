@@ -84,7 +84,7 @@ accepts.</p>
 <span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>  tmp<span class="sc">/</span>              chunks are written here, then renamed into place</span></code></pre><p></p></div>
 <p>Writes go to <code>tmp/</code> and are renamed into <code>objects/</code>, so a chunk is either
 complete or absent, and two processes may put into one store at once.
-<code>dedup_gc()</code> is not safe against a concurrent put; take whatever lock
+<code><a href="dedup_gc.html">dedup_gc()</a></code> is not safe against a concurrent put; take whatever lock
 your system provides around it.</p>
 <p>The default hash, XXH3-128, is fast and not cryptographic: an adversary
 who can write to the store and choose content can make two chunks with
@@ -100,7 +100,7 @@ the same digest. For a store that parties you do not trust write to, use
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">store</span> <span class="op">&lt;-</span> <span class="fu">dedup_store</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"example-store"</span><span class="op">)</span>, create <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">store</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;dedup_backend&gt; filesystem: /tmp/RtmpCTZOND/example-store</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;dedup_backend&gt; filesystem: /tmp/RtmpcJoXBi/example-store</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   hash:   xxh3 (not cryptographic)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   params: min 2048, avg 8192, max 65536</span>
 <span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="dedup_put.html">dedup_put</a></span><span class="op">(</span><span class="va">store</span>, <span class="fu"><a href="https://rdrr.io/r/base/serialize.html" class="external-link">serialize</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="cn">NULL</span><span class="op">)</span><span class="op">)</span></span></span>

@@ -33,6 +33,14 @@ becomes `# zudedup 0.1.0` when it is submitted).
   [`dedup_delete()`](https://pedrobtz.github.io/zudedup/reference/dedup_delete.md)
   act on digests.
 
+- [`dedup_diff()`](https://pedrobtz.github.io/zudedup/reference/dedup_diff.md)
+  measures what two versions share;
+  [`dedup_verify()`](https://pedrobtz.github.io/zudedup/reference/dedup_verify.md)
+  names the corrupt chunks in a store;
+  [`dedup_gc()`](https://pedrobtz.github.io/zudedup/reference/dedup_gc.md)
+  deletes the chunks no kept manifest needs, and partial writes an
+  interrupted put left behind.
+
 - [`zudedup_info()`](https://pedrobtz.github.io/zudedup/reference/zudedup_info.md)
   reports the build, the format constants and the hash algorithms
   available.

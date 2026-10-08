@@ -6,6 +6,8 @@
   : Split bytes into content-defined chunks
 - [`dedup_manifest()`](https://pedrobtz.github.io/zudedup/reference/dedup_manifest.md)
   : The manifest of an object
+- [`dedup_diff()`](https://pedrobtz.github.io/zudedup/reference/dedup_diff.md)
+  : What two versions of an object share
 
 ## Stores
 
@@ -22,6 +24,10 @@
   : Which chunks a store has
 - [`dedup_delete()`](https://pedrobtz.github.io/zudedup/reference/dedup_delete.md)
   : Delete chunks from a store
+- [`dedup_verify()`](https://pedrobtz.github.io/zudedup/reference/dedup_verify.md)
+  : Check every chunk in a store
+- [`dedup_gc()`](https://pedrobtz.github.io/zudedup/reference/dedup_gc.md)
+  : Delete the chunks no manifest needs
 
 ## About
 

@@ -8,11 +8,14 @@
 <url><loc>https://pedrobtz.github.io/zudedup/reference/dedup_backend.html</loc></url>
 <url><loc>https://pedrobtz.github.io/zudedup/reference/dedup_chunk.html</loc></url>
 <url><loc>https://pedrobtz.github.io/zudedup/reference/dedup_delete.html</loc></url>
+<url><loc>https://pedrobtz.github.io/zudedup/reference/dedup_diff.html</loc></url>
+<url><loc>https://pedrobtz.github.io/zudedup/reference/dedup_gc.html</loc></url>
 <url><loc>https://pedrobtz.github.io/zudedup/reference/dedup_get.html</loc></url>
 <url><loc>https://pedrobtz.github.io/zudedup/reference/dedup_has.html</loc></url>
 <url><loc>https://pedrobtz.github.io/zudedup/reference/dedup_manifest.html</loc></url>
 <url><loc>https://pedrobtz.github.io/zudedup/reference/dedup_put.html</loc></url>
 <url><loc>https://pedrobtz.github.io/zudedup/reference/dedup_store.html</loc></url>
+<url><loc>https://pedrobtz.github.io/zudedup/reference/dedup_verify.html</loc></url>
 <url><loc>https://pedrobtz.github.io/zudedup/reference/index.html</loc></url>
 <url><loc>https://pedrobtz.github.io/zudedup/reference/zudedup-conditions.html</loc></url>
 <url><loc>https://pedrobtz.github.io/zudedup/reference/zudedup-package.html</loc></url>

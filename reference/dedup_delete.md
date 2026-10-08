@@ -1,7 +1,9 @@
 # Delete chunks from a store
 
 Removes the named chunks. An object whose manifest names a deleted chunk
-can no longer be read; `dedup_gc()` is the safe way to reclaim space.
+can no longer be read;
+[`dedup_gc()`](https://pedrobtz.github.io/zudedup/reference/dedup_gc.md)
+is the safe way to reclaim space.
 
 ## Usage
 

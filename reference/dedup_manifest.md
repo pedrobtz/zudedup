@@ -4,7 +4,9 @@ Chunks an object and records, in order, the digest and length of every
 chunk, the object's size and the digest of the whole object. Two objects
 whose manifests have the same `hashes` have the same bytes, up to the
 strength of the hash; two versions of an object share the digests of the
-chunks they share.
+chunks they share, which
+[`dedup_diff()`](https://pedrobtz.github.io/zudedup/reference/dedup_diff.md)
+measures.
 
 ## Usage
 
@@ -55,8 +57,10 @@ who chooses content can make two chunks with the same digest. Use
 
 ## See also
 
-[`dedup_chunk()`](https://pedrobtz.github.io/zudedup/reference/dedup_chunk.md)
-for the chunk table alone.
+[`dedup_put()`](https://pedrobtz.github.io/zudedup/reference/dedup_put.md)
+to store an object,
+[`dedup_diff()`](https://pedrobtz.github.io/zudedup/reference/dedup_diff.md)
+to compare two.
 
 ## Examples
 

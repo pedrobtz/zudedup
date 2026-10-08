@@ -48,8 +48,10 @@ accepts.
 
 Writes go to `tmp/` and are renamed into `objects/`, so a chunk is
 either complete or absent, and two processes may put into one store at
-once. `dedup_gc()` is not safe against a concurrent put; take whatever
-lock your system provides around it.
+once.
+[`dedup_gc()`](https://pedrobtz.github.io/zudedup/reference/dedup_gc.md)
+is not safe against a concurrent put; take whatever lock your system
+provides around it.
 
 The default hash, XXH3-128, is fast and not cryptographic: an adversary
 who can write to the store and choose content can make two chunks with
@@ -66,7 +68,7 @@ for a store kept anywhere else.
 ``` r
 store <- dedup_store(file.path(tempdir(), "example-store"), create = TRUE)
 store
-#> <dedup_backend> filesystem: /tmp/RtmpCTZOND/example-store
+#> <dedup_backend> filesystem: /tmp/RtmpcJoXBi/example-store
 #>   hash:   xxh3 (not cryptographic)
 #>   params: min 2048, avg 8192, max 65536
 m <- dedup_put(store, serialize(mtcars, NULL))

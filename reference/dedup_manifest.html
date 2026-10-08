@@ -3,11 +3,11 @@
 chunk, the object's size and the digest of the whole object. Two objects
 whose manifests have the same hashes have the same bytes, up to the
 strength of the hash; two versions of an object share the digests of the
-chunks they share."><meta property="og:description" content="Chunks an object and records, in order, the digest and length of every
+chunks they share, which dedup_diff() measures."><meta property="og:description" content="Chunks an object and records, in order, the digest and length of every
 chunk, the object's size and the digest of the whole object. Two objects
 whose manifests have the same hashes have the same bytes, up to the
 strength of the hash; two versions of an object share the digests of the
-chunks they share."></head><body>
+chunks they share, which dedup_diff() measures."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -46,7 +46,7 @@ chunks they share."></head><body>
 chunk, the object's size and the digest of the whole object. Two objects
 whose manifests have the same <code>hashes</code> have the same bytes, up to the
 strength of the hash; two versions of an object share the digests of the
-chunks they share.</p>
+chunks they share, which <code><a href="dedup_diff.html">dedup_diff()</a></code> measures.</p>
     </div>
 
     <div class="section level2">
@@ -95,7 +95,7 @@ who chooses content can make two chunks with the same digest. Use
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="dedup_chunk.html">dedup_chunk()</a></code> for the chunk table alone.</p></div>
+    <div class="dont-index"><p><code><a href="dedup_put.html">dedup_put()</a></code> to store an object, <code><a href="dedup_diff.html">dedup_diff()</a></code> to compare two.</p></div>
     </div>
 
     <div class="section level2">
