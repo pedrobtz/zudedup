@@ -2,16 +2,20 @@
 
 ## Authors
 
-- **First Last**. Author, maintainer.
+- **Pedro Baltazar**. Author, maintainer, copyright holder.
 
 ## Citation
 
-Last F (2026). *zudedup: What the Package Does (One Line, Title Case)*.
-R package version 0.0.0.9000, <https://pedrobtz.github.io/zudedup/>.
+Source:
+[`DESCRIPTION`](https://github.com/pedrobtz/zudedup/blob/main/DESCRIPTION)
+
+Baltazar P (2026). *zudedup: Content-Defined Chunking and
+Content-Addressed Storage*. R package version 0.0.0.9000,
+<https://pedrobtz.github.io/zudedup/>.
 
     @Manual{,
-      title = {zudedup: What the Package Does (One Line, Title Case)},
-      author = {First Last},
+      title = {zudedup: Content-Defined Chunking and Content-Addressed Storage},
+      author = {Pedro Baltazar},
       year = {2026},
       note = {R package version 0.0.0.9000},
       url = {https://pedrobtz.github.io/zudedup/},

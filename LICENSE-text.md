@@ -1,4 +1,4 @@
 # License
 
     YEAR: 2026
-    COPYRIGHT HOLDER: zudedup authors
+    COPYRIGHT HOLDER: Pedro Baltazar
