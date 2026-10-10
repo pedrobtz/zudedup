@@ -29,3 +29,7 @@ The development version of the first release, 0.1.0 (this heading becomes
 
 * `zudedup_info()` reports the build, the format constants and the hash
   algorithms available.
+
+* The store's metadata file, `zudedup.json`, is read and written with
+  zujson instead of jsonlite. The file is unchanged, so existing stores open
+  as before; zudedup's one runtime dependency is now a family package.

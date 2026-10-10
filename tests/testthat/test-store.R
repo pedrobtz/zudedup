@@ -88,7 +88,7 @@ test_that("a store records and enforces its algorithm and parameters", {
   dir <- withr::local_tempdir()
   path <- file.path(dir, "s")
   s <- dedup_store(path, create = TRUE, min = 64, avg = 256, max = 1024)
-  meta <- jsonlite::read_json(file.path(path, "zudedup.json"))
+  meta <- zujson::json_parse_file(file.path(path, "zudedup.json"))
   expect_identical(meta, list(format = 1L, algorithm = "xxh3", min = 64L,
                               avg = 256L, max = 1024L))
   expect_true(dir.exists(file.path(path, c("objects", "tmp"))) |> all())

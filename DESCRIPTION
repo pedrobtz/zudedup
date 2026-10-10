@@ -18,7 +18,7 @@ BugReports: https://github.com/pedrobtz/zudedup/issues
 Depends: 
     R (>= 4.1)
 Imports: 
-    jsonlite
+    zujson (>= 0.1.0)
 LinkingTo: 
     zufast (>= 0.1.0)
 Suggests: 
