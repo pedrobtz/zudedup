@@ -15,7 +15,8 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+      <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/zudedup.html">Get started</a></li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -39,7 +40,9 @@
 <li><p><code><a href="../reference/dedup_chunk.html">dedup_chunk()</a></code> gives each chunk’s digest, and <code><a href="../reference/dedup_manifest.html">dedup_manifest()</a></code> records an object’s chunk digests, lengths, size and whole-object digest. XXH3-128 (through zufast, the digest <code>xxhsum -H2</code> prints) is the default and is not cryptographic; <code>hash = "sha256"</code> uses zucrypt.</p></li>
 <li><p><code><a href="../reference/dedup_store.html">dedup_store()</a></code> opens or creates a content-addressed store in a directory, and <code><a href="../reference/dedup_backend.html">dedup_backend()</a></code> builds one from five functions of your own. <code><a href="../reference/dedup_put.html">dedup_put()</a></code> writes only the chunks a store lacks; <code><a href="../reference/dedup_get.html">dedup_get()</a></code> reassembles an object, refusing a missing or corrupt chunk; <code><a href="../reference/dedup_has.html">dedup_has()</a></code>, <code><a href="../reference/dedup_has.html">dedup_missing()</a></code> and <code><a href="../reference/dedup_delete.html">dedup_delete()</a></code> act on digests.</p></li>
 <li><p><code><a href="../reference/dedup_diff.html">dedup_diff()</a></code> measures what two versions share; <code><a href="../reference/dedup_verify.html">dedup_verify()</a></code> names the corrupt chunks in a store; <code><a href="../reference/dedup_gc.html">dedup_gc()</a></code> deletes the chunks no kept manifest needs, and partial writes an interrupted put left behind.</p></li>
+<li><p>A vignette, <em>Versioning large objects with zudedup</em>, walks through two versions of a data frame, a store and garbage collection.</p></li>
 <li><p><code><a href="../reference/zudedup_info.html">zudedup_info()</a></code> reports the build, the format constants and the hash algorithms available.</p></li>
+<li><p>The store’s metadata file, <code>zudedup.json</code>, is read and written with zujson instead of jsonlite. The file is unchanged, so existing stores open as before; zudedup’s one runtime dependency is now a family package.</p></li>
 </ul></div>
   </main></div>
 

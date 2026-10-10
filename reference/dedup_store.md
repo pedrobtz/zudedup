@@ -68,7 +68,7 @@ for a store kept anywhere else.
 ``` r
 store <- dedup_store(file.path(tempdir(), "example-store"), create = TRUE)
 store
-#> <dedup_backend> filesystem: /tmp/RtmpcJoXBi/example-store
+#> <dedup_backend> filesystem: /tmp/RtmpPQFgpm/example-store
 #>   hash:   xxh3 (not cryptographic)
 #>   params: min 2048, avg 8192, max 65536
 m <- dedup_put(store, serialize(mtcars, NULL))

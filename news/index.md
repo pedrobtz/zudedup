@@ -41,6 +41,14 @@ becomes `# zudedup 0.1.0` when it is submitted).
   deletes the chunks no kept manifest needs, and partial writes an
   interrupted put left behind.
 
+- A vignette, *Versioning large objects with zudedup*, walks through two
+  versions of a data frame, a store and garbage collection.
+
 - [`zudedup_info()`](https://pedrobtz.github.io/zudedup/reference/zudedup_info.md)
   reports the build, the format constants and the hash algorithms
   available.
+
+- The store’s metadata file, `zudedup.json`, is read and written with
+  zujson instead of jsonlite. The file is unchanged, so existing stores
+  open as before; zudedup’s one runtime dependency is now a family
+  package.

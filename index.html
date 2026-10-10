@@ -31,6 +31,7 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="articles/zudedup.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
@@ -51,8 +52,15 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>zudedup splits byte streams into variable-size chunks at boundaries chosen by their content (FastCDC), hashes each chunk with XXH3-128 or SHA-256, and stores chunks by hash. Two versions of a large object that differ in a few places share almost every chunk, so a store keeps the second version for the price of the bytes that changed.</p>
-<p>It is in development: the chunker, manifests and the store arrive stage by stage (see the roadmap in <code>.agents/roadmap.md</code>).</p>
+<p>zudedup splits byte streams into variable-size chunks at boundaries chosen by their content (FastCDC), hashes each chunk with XXH3-128 or SHA-256, and stores chunks by hash. Two versions of a large object that differ in a few places share almost every chunk, so a store keeps the second version for the price of the bytes that changed, and a manifest of chunk digests says exactly what two versions share.</p>
+<ul>
+<li>
+<strong>Boundaries are a format.</strong> The same bytes give the same chunks on every platform, in every version, however they are read, and they agree with the Python <code>fastcdc</code> package given zudedup’s gear table.</li>
+<li>
+<strong>The hash says what it is.</strong> XXH3-128 is the fast default and is not cryptographic; <code>hash = "sha256"</code> is one argument away.</li>
+<li>
+<strong>The store is dumb.</strong> It maps a digest to bytes, in a directory or behind any backend of five functions, and refuses to return bytes that do not match their digest.</li>
+</ul>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -60,6 +68,26 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("pak")</span></span>
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"pedrobtz/zudedup"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
+</h2>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://pedrobtz.github.io/zudedup/">zudedup</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">v1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/serialize.html" class="external-link">serialize</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="va">cars2</span> <span class="op">&lt;-</span> <span class="va">mtcars</span></span>
+<span><span class="va">cars2</span><span class="op">[</span><span class="st">"Valiant"</span>, <span class="st">"mpg"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">99</span></span>
+<span><span class="va">v2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/serialize.html" class="external-link">serialize</a></span><span class="op">(</span><span class="va">cars2</span>, <span class="cn">NULL</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">store</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dedup_store.html">dedup_store</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span>, create <span class="op">=</span> <span class="cn">TRUE</span>, min <span class="op">=</span> <span class="fl">64</span>, avg <span class="op">=</span> <span class="fl">256</span>, max <span class="op">=</span> <span class="fl">1024</span><span class="op">)</span></span>
+<span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dedup_put.html">dedup_put</a></span><span class="op">(</span><span class="va">store</span>, <span class="va">v1</span><span class="op">)</span></span>
+<span><span class="va">m2</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dedup_put.html">dedup_put</a></span><span class="op">(</span><span class="va">store</span>, <span class="va">v2</span><span class="op">)</span>   <span class="co"># writes only the chunks v1 lacks</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/dedup_diff.html">dedup_diff</a></span><span class="op">(</span><span class="va">m1</span>, <span class="va">m2</span><span class="op">)</span><span class="op">$</span><span class="va">ratio</span>     <span class="co"># the fraction of v2 already stored</span></span>
+<span><span class="co">#&gt; [1] 0.9340688</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/serialize.html" class="external-link">unserialize</a></span><span class="op">(</span><span class="fu"><a href="reference/dedup_get.html">dedup_get</a></span><span class="op">(</span><span class="va">store</span>, <span class="va">m2</span><span class="op">)</span><span class="op">)</span>, <span class="va">cars2</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
