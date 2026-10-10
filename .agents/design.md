@@ -61,7 +61,7 @@ These are zudedup's cells for the family table that alignment rule R1 of [`zu-fa
 | Hides symbols (`$(C_VISIBILITY)`) | yes, from Stage 0 (R3) |
 | Vendored code | none |
 | `LinkingTo` | `zufast (>= 0.1.0)` |
-| `Imports` | `jsonlite` (D9) from Stage 3, when the store's metadata file needs it, until `zujson` is on CRAN |
+| `Imports` | `zujson` (D9) for the store's metadata file; `jsonlite` until 2026-10-10 |
 | `Suggests` | `zucrypt`, `callr`, `testthat`, `withr`, `knitr`, `rmarkdown` (not `dastash`: it will depend on zudedup, and is not on CRAN) |
 | `Remotes` (development only) | `pedrobtz/zufast@main`, `pedrobtz/zucrypt@main` |
 | `Depends: R` | 4.1 (R2) |
@@ -280,7 +280,7 @@ The chunker reads bytes and computes a hash; it cannot be made to allocate by it
 
 ## 14. Build, portability and CRAN
 
-- C99, the family's lint flags; `LinkingTo: zufast (>= 0.1.0)`; `Imports: jsonlite` for the store metadata file, or `zujson` once it is on CRAN (D9); `Suggests: zucrypt, dastash, callr, testthat (>= 3.0.0), withr`. During development `Remotes: pedrobtz/zufast@main`, removed before submission (alignment R10.2).
+- C99, the family's lint flags; `LinkingTo: zufast (>= 0.1.0)`; `Imports: zujson` for the store metadata file (D9); `Suggests: zucrypt, dastash, callr, testthat (>= 3.0.0), withr`. During development `Remotes: pedrobtz/zufast@main`, removed before submission (alignment R10.2).
 - `src/Makevars`: `PKG_CFLAGS = $(C_VISIBILITY)`, hand-listed `OBJECTS`, portable make only; the shared object exports `R_init_zudedup` only (`tools/check-symbols`).
 - Licence MIT; `Language: en-GB`; `.Rbuildignore` covers `.agents/`, `.claude/`, `tools/`, `fuzz/`.
 - CRAN order: after `zufast` (tagged 0.1.0, not on CRAN on 2026-10-08). Nothing else waits on zudedup; `dastash` adopts it after.
@@ -334,7 +334,7 @@ The chunking target is met. The put target is not, and cannot be met by the file
 | D6 | Store semantics | hash to bytes only; no keys, no expiry |
 | D7 | Filesystem layout | two-character prefix directories, atomic rename |
 | D8 | Backend interface | five R functions; the one API other packages hold |
-| D9 | Metadata file | JSON through `jsonlite` until `zujson` is on CRAN |
+| D9 | Metadata file | JSON through `zujson` (*was `jsonlite` until zujson reached CRAN; switched 2026-10-10*) |
 | D10 | Compression at rest | none in 0.1.0; `zukomp` later |
 | D11 | Info function | `zudedup_info()`, the package name (R1) |
 | D12 | Digest rendering | canonical big-endian hex, `high` then `low` (*verified 2026-10-08*) |
@@ -353,7 +353,7 @@ Reasons where they are not in the section cited:
 
 - **D1.** Rabin fingerprinting is slower per byte and no better at boundaries; fixed-size chunking cannot survive an insertion. FastCDC is what the production tools of §3.2 converged on.
 - **D4.** dastash's blob layer is local and private, where speed matters and an adversary does not; the family review gives digests to `zucrypt`, which stays true for the strong option.
-- **D9.** `jsonlite` is the one dependency outside the family; it goes when `zujson` ships, by a one-line change, and the file format is plain enough that either reads it.
+- **D9.** `jsonlite` was the one dependency outside the family, held until `zujson` shipped. zujson 0.1.0 reached CRAN and replaced it on 2026-10-10. The file is unchanged: zujson writes the same bytes jsonlite did, and reads the same numbers back as integers, so a store made with either opens with the other.
 - **D12.** The rendering must match what other tools print, or a user cannot check a store against `xxhsum`.
 - **D14.** The rule had to be one an independent implementation computes, or the conformance test proves nothing; the Python package is that implementation. Its right shift is also what makes contiguous low-bit masks sound (§6.1). Its normal point puts the mean chunk size near `avg`, which the paper's switch at `avg` does not when the first `min` bytes are skipped.
 - **D15.** zudedup cannot read a connection twice, and buffering a whole object to hash it defeats bounded memory. An `NA` that says so is better than either.
@@ -373,7 +373,7 @@ None. Q1–Q3 became D20–D22 at Stage 5, by the RFC's recommendations; Q4 and 
 
 ## 19. Acceptance criteria for v0.1.0
 
-1. Builds everywhere with `zufast` from CRAN and nothing else at run time beyond `jsonlite`.
+1. Builds everywhere with `zufast` from CRAN and nothing else at run time beyond `zujson`.
 2. The boundary fixture reproduces exactly on every platform.
 3. Boundaries are block-independent, by the property test and the fuzzer.
 4. Python `fastcdc` 1.7.0 with zudedup's table substituted agrees on every fixture.

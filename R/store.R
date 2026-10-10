@@ -101,7 +101,7 @@ zdd_create_store <- function(path, hash, params) {
   meta <- list(format = zdd_store_format, algorithm = hash, min = params$min,
                avg = params$avg, max = params$max)
   tmp <- tempfile("meta-", tmpdir = file.path(path, "tmp"))
-  jsonlite::write_json(meta, tmp, auto_unbox = TRUE, pretty = TRUE, digits = NA)
+  writeLines(zujson::json_write(meta, pretty = TRUE), tmp, useBytes = TRUE)
   if (!file.rename(tmp, file.path(path, "zudedup.json"))) {
     unlink(tmp)
     zdd_io_error(sprintf("could not write %s", file.path(path, "zudedup.json")))
@@ -109,7 +109,7 @@ zdd_create_store <- function(path, hash, params) {
 }
 
 zdd_read_meta <- function(meta_path) {
-  meta <- tryCatch(jsonlite::read_json(meta_path, simplifyVector = TRUE),
+  meta <- tryCatch(zujson::json_parse_file(meta_path),
                    error = function(e) NULL)
   ok <- is.list(meta) && identical(meta$format, zdd_store_format) &&
     is.character(meta$algorithm) && length(meta$algorithm) == 1L &&

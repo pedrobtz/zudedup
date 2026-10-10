@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-`zudedup` is an R package for content-defined chunking and content-addressed storage: it splits byte streams into variable-size chunks at content-chosen boundaries (FastCDC with a gear rolling hash, in C), hashes each chunk with XXH3-128 from `zufast` (`LinkingTo`, header-only) or SHA-256 from `zucrypt` (`Suggests`), builds manifests, diffs them, and stores chunks by hash in a dumb filesystem store behind a five-function backend interface that other packages (`dastash`, an mdbx or object-storage backend) implement. The one runtime dependency is `jsonlite`, for the store's metadata file, until `zujson` is on CRAN. It deliberately has no keys, no expiry, no eviction, no encryption and no C API: it maps a hash to bytes and nothing else.
+`zudedup` is an R package for content-defined chunking and content-addressed storage: it splits byte streams into variable-size chunks at content-chosen boundaries (FastCDC with a gear rolling hash, in C), hashes each chunk with XXH3-128 from `zufast` (`LinkingTo`, header-only) or SHA-256 from `zucrypt` (`Suggests`), builds manifests, diffs them, and stores chunks by hash in a dumb filesystem store behind a five-function backend interface that other packages (`dastash`, an mdbx or object-storage backend) implement. The one runtime dependency is `zujson`, a family member, for the store's metadata file. It deliberately has no keys, no expiry, no eviction, no encryption and no C API: it maps a hash to bytes and nothing else.
 
 Two documents outrank this file. [.agents/design.md](../.agents/design.md) is the specification, numbered §1–§20: every statement in it is a decision, and open questions live only in its §18. [.agents/roadmap.md](../.agents/roadmap.md) sequences it into Stages 0–6, each with a **Status:** line under its heading. Both were adopted on 2026-10-08 from [RFC 0006](https://github.com/pedrobtz/packages/blob/main/rfcs/0006-zudedup-content-defined-chunking.md) in `pedrobtz/packages`. `CLAUDE.md` orients, the design decides, the roadmap sequences.
 
@@ -144,7 +144,7 @@ The pipeline is: R reads blocks (1 MiB from a connection, or the whole raw vecto
 - Prose is simple, short and en-GB (`Language: en-GB`, `inst/WORDLIST`).
 - Wrap roxygen at 80 characters; `air format .` on R sources.
 - `lower_snake_case`; the naming table above.
-- One hard runtime dependency, `jsonlite` (design D9); add none without a recorded decision. `zucrypt`, `dastash` and `callr` stay in `Suggests`.
+- One hard runtime dependency, `zujson` (design D9); add none without a recorded decision. `zucrypt`, `dastash` and `callr` stay in `Suggests`.
 - Every export has `@return` and runnable `@examples`; no roxygen topics for internals.
 - `R/zu_source.R` is copied verbatim from `../zuxml`; fix it there and re-copy.
 - `NEWS.md` keeps a versioned heading.

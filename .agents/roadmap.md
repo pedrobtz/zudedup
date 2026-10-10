@@ -266,7 +266,7 @@ Reusable workflows from `pedrobtz/r-actions`; the scaffold's three exist at `@v1
 
 | § 19 | Criterion | Stage |
 |---|---|---|
-| 1 | builds everywhere with zufast from CRAN, `jsonlite` the only runtime import | 0, 6 |
+| 1 | builds everywhere with zufast from CRAN, `zujson` the only runtime import | 0, 6 |
 | 2 | the boundary fixture reproduces on every platform | 1 |
 | 3 | block independence by property and fuzzer | 1 |
 | 4 | Python `fastcdc` agrees | 5 |
@@ -292,5 +292,5 @@ Compression at rest · manifest files unless §18 Q2 admits them · delta encodi
 ## After 0.1.0
 
 1. dastash's adoption and whatever it shows the backend interface gets wrong.
-2. §18 Q1 and Q2 as their triggers arrive; `zujson` for the metadata file when it is on CRAN (D9).
+2. §18 Q1 and Q2 as their triggers arrive. (`zujson` replaced `jsonlite` for the metadata file on 2026-10-10, before the release: D9.)
 3. A Merkle tree over manifests if partial verification is asked for.
