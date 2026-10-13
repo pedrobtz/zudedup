@@ -250,7 +250,7 @@ zudedup_error
 ├── zudedup_invalid_argument    parameters, a bad manifest, an unknown hash, a missing backend function
 ├── zudedup_store_error         a missing or corrupt chunk; an unusable store   (problem, hash, index)
 ├── zudedup_algorithm_error     a manifest's algorithm or params do not match the store's
-├── zudedup_io_error            a connection or file could not be read or written
+├── zudedup_io_error            a connection, URL or file could not be opened, read or written
 └── zudedup_limit_error         a limit of §12 was reached                       (limit, limit_value)
 ```
 

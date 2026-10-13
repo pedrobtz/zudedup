@@ -22,8 +22,8 @@ position in the manifest, where they apply.}
 \item{\code{zudedup_algorithm_error}}{A manifest's hash algorithm or
 chunking parameters differ from the store's or from another
 manifest's.}
-\item{\code{zudedup_io_error}}{A connection or file could not be read or
-written.}
+\item{\code{zudedup_io_error}}{A connection, URL or file could not be
+opened, read or written, such as a URL that answers HTTP 404.}
 \item{\code{zudedup_limit_error}}{A limit was reached. The condition carries
 \code{limit}, the argument's name, such as \code{"max_chunks"}, and
 \code{limit_value}.}
