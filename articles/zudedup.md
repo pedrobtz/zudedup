@@ -76,7 +76,7 @@ chunks; putting the second writes only the ones it does not share.
 
 store <- dedup_store(file.path(tempdir(), "vignette-store"), create = TRUE)
 store
-#> <dedup_backend> filesystem: /tmp/RtmpGrun2o/vignette-store
+#> <dedup_backend> filesystem: /tmp/RtmpbeCqdz/vignette-store
 #>   hash:   xxh3 (not cryptographic)
 #>   params: min 2048, avg 8192, max 65536
 dedup_missing(store, m1) |> length()

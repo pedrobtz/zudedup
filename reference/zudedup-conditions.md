@@ -28,7 +28,8 @@ Every class below inherits from `zudedup_error`.
 
 - `zudedup_io_error`:
 
-  A connection or file could not be read or written.
+  A connection, URL or file could not be opened, read or written, such
+  as a URL that answers HTTP 404.
 
 - `zudedup_limit_error`:
 

@@ -48,6 +48,16 @@ becomes `# zudedup 0.1.0` when it is submitted).
   reports the build, the format constants and the hash algorithms
   available.
 
+- A URL or file that
+  [`dedup_chunk()`](https://pedrobtz.github.io/zudedup/reference/dedup_chunk.md),
+  [`dedup_manifest()`](https://pedrobtz.github.io/zudedup/reference/dedup_manifest.md)
+  or
+  [`dedup_put()`](https://pedrobtz.github.io/zudedup/reference/dedup_put.md)
+  cannot open, such as a URL that answers HTTP 404, is a
+  `zudedup_io_error` whose message gives the cause. It was an unclassed
+  error after a separate warning, and the connection was left for the
+  garbage collector (pedrobtz/zuxml#74).
+
 - The store’s metadata file, `zudedup.json`, is read and written with
   zujson instead of jsonlite. The file is unchanged, so existing stores
   open as before; zudedup’s one runtime dependency is now a family
