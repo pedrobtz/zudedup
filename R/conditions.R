@@ -20,8 +20,8 @@
 #'   \item{`zudedup_algorithm_error`}{A manifest's hash algorithm or
 #'     chunking parameters differ from the store's or from another
 #'     manifest's.}
-#'   \item{`zudedup_io_error`}{A connection or file could not be read or
-#'     written.}
+#'   \item{`zudedup_io_error`}{A connection, URL or file could not be
+#'     opened, read or written, such as a URL that answers HTTP 404.}
 #'   \item{`zudedup_limit_error`}{A limit was reached. The condition carries
 #'     `limit`, the argument's name, such as `"max_chunks"`, and
 #'     `limit_value`.}

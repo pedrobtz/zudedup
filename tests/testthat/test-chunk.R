@@ -84,6 +84,17 @@ test_that("bad inputs are refused", {
   expect_zudedup_error(dedup_chunk(con), "zudedup_invalid_argument", arg = "x")
 })
 
+test_that("a URL that cannot be opened is an io error, without a warning", {
+  # A file:// URL is opened as a URL connection and fails, as an HTTP 404
+  # does, without needing the network.
+  missing <- paste0("file://", file.path(tempdir(), "no-such-file.bin"))
+  before <- nrow(showConnections(all = TRUE))
+  expect_no_warning(
+    expect_zudedup_error(dedup_chunk(missing), "zudedup_io_error")
+  )
+  expect_identical(nrow(showConnections(all = TRUE)), before)
+})
+
 test_that("C refuses parameters and states the R checks would catch", {
   r <- .Call(zudedup_cdc_init, 64, 300, 1024, TRUE)
   expect_identical(r$status, "ZDD_ERR_PARAMS")

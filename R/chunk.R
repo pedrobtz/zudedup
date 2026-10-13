@@ -196,7 +196,10 @@ zdd_open_input <- function(x) {
     zdd_invalid_argument("x", "`x` must be a raw vector, a connection or a file path")
   }
   zu_open_input(x, what = "x", prefix = "zudedup",
-                abort = function(arg, message) zdd_invalid_argument(arg, message))
+                abort = function(arg, message) zdd_invalid_argument(arg, message),
+                fail = function(message) {
+                  zdd_io_error(paste0("could not open the input: ", message))
+                })
 }
 
 # Runs a .Call that returns list(status, ...) and raises on a status.
