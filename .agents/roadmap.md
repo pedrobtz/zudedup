@@ -278,6 +278,8 @@ Reusable workflows from `pedrobtz/r-actions`; the scaffold's three exist at `@v1
 
 Compression at rest · manifest files unless §18 Q2 admits them · delta encoding · a Merkle tree · remote backends (the interface ships; implementations do not) · a C API.
 
+**Recorded for after 0.1.0** (2026-10-28): a streaming `dedup_serialize()`/`dedup_unserialize()` pair, the compression caveat in the documentation (sharing exists only on uncompressed bytes; a gzipped `.rds` put as-is dedups badly), and a note on the `dedup_diff()` reference page that it is a manifest set difference, with zudiff for edit scripts: [#22](https://github.com/pedrobtz/zudedup/issues/22). A manifest is a storage identity, not a cache key across R versions; dastash's adoption issue inherits both points.
+
 ## Risk register
 
 | Risk | Stage | Mitigation |
