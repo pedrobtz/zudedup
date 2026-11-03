@@ -55,7 +55,7 @@ m1 <- dedup_manifest(x1)
 m2 <- dedup_manifest(x2)
 m1
 #> <dedup_manifest> 850,314 bytes in 104 chunks
-#>   hash:   xxh3 fb8a718f9d2d5cb4b204ad78b82c2606
+#>   hash:   xxh3 645241578d227f1b7268bab338eab4a2
 #>   params: min 2048, avg 8192, max 65536
 d <- dedup_diff(m1, m2)
 d$ratio
@@ -76,7 +76,7 @@ chunks; putting the second writes only the ones it does not share.
 
 store <- dedup_store(file.path(tempdir(), "vignette-store"), create = TRUE)
 store
-#> <dedup_backend> filesystem: /tmp/Rtmpm3SBbH/vignette-store
+#> <dedup_backend> filesystem: /tmp/RtmpD1wpa8/vignette-store
 #>   hash:   xxh3 (not cryptographic)
 #>   params: min 2048, avg 8192, max 65536
 dedup_missing(store, m1) |> length()
@@ -126,7 +126,7 @@ does for a store shared with parties you do not trust. There, use
 
 dedup_manifest(x1, hash = "sha256")
 #> <dedup_manifest> 850,314 bytes in 104 chunks
-#>   hash:   sha256 a0efb6acd626d47731f9c2426ac0a1be17adf2d561218ef11867367857632e6c
+#>   hash:   sha256 5e1da267654565e15e1cc54e11a29e36b2a31025427f38d9808697e477720c92
 #>   params: min 2048, avg 8192, max 65536
 ```
 

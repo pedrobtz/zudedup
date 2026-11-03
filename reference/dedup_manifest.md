@@ -69,11 +69,11 @@ x <- serialize(mtcars, NULL)
 m <- dedup_manifest(x, min = 64, avg = 256, max = 1024)
 m
 #> <dedup_manifest> 3,807 bytes in 15 chunks
-#>   hash:   xxh3 1f06f784813afcdab461cd3834bfdb1c
+#>   hash:   xxh3 439455c43354af25437dd526d34a19e1
 #>   params: min 64, avg 256, max 1024
 head(as.data.frame(m))
 #>   offset length                             hash
-#> 1      0    251 0f893b93eb1ff3b923ff38e1ed8df53f
+#> 1      0    251 758a29c246948a5353a3645fd8467f41
 #> 2    251    202 d9dbb5b4dbba8ba7b0e3733c203434f9
 #> 3    453    353 69c955ef4d40fa9caddebda5259598a9
 #> 4    806    165 2d7cd06b5e384ac0d4df3c99e7c07b6d
