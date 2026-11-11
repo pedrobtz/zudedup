@@ -14,6 +14,6 @@ concurrency:
 
 jobs:
   coverage:
-    uses: pedrobtz/r-actions/.github/workflows/coverage.yml@bdfde5edd37f25b33af142a4a881585e77bda3c2 # v1.22.0
+    uses: pedrobtz/r-actions/.github/workflows/coverage.yml@30da3a640992fe6d502c578a12c0f2f3aed282c1 # v1.26.0
     permissions:
       contents: write
