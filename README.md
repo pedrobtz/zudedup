@@ -2,7 +2,7 @@
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/pedrobtz/zudedup/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/pedrobtz/zudedup/actions/workflows/R-CMD-check.yaml)
-[![coverage](https://raw.githubusercontent.com/pedrobtz/zudedup/main/.github/badges/coverage.svg)](https://github.com/pedrobtz/zudedup/actions/workflows/coverage.yaml)
+[![coverage](https://raw.githubusercontent.com/pedrobtz/zudedup/gh-pages/badges/coverage.svg)](https://github.com/pedrobtz/zudedup/actions/workflows/coverage.yaml)
 <!-- badges: end -->
 
 zudedup splits byte streams into variable-size chunks at boundaries chosen
