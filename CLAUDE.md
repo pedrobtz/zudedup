@@ -5,15 +5,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Shared conventions
 
-The portfolio's shared rules are synced into `.claude/shared/` from
-`pedrobtz/packages:claude/shared/`. Never edit them here. Where this file and
-a shared file disagree, this file wins for this package.
+<!-- r-skills: shared-rules -->
 
-@.claude/shared/workflow.md
-@.claude/shared/r-package.md
-@.claude/shared/ci.md
-@.claude/shared/correctness.md
-@.claude/shared/assurance.md
+The portfolio's shared rules (`workflow`, `r-package`, `ci`, `native-code`,
+`correctness`, `assurance`) come from the
+[r-skills](https://github.com/pedrobtz/r-skills) plugin's `rules/`, loaded at
+session start because of the marker above. Never copy them here. Where this
+file and a shared rule disagree, this file wins for this package. Cloud
+sessions do not load the plugin and run without them.
 
 Nothing is vendored (no `src/vendor/`), so `native-code.md` is not imported.
 
@@ -90,7 +89,7 @@ metadata, never a change to the old one.
 
 ## Commands
 
-The everyday `devtools` commands are in `.claude/shared/r-package.md`. The
+The everyday `devtools` commands are in the shared `r-package.md` rules. The
 check here runs in CRAN mode with the clock check off:
 
 ```sh
@@ -200,7 +199,7 @@ renames).
 
 ## Editing rules
 
-These add to `.claude/shared/r-package.md`, or depart from it where stated.
+These add to the shared `r-package.md` rules, or depart from it where stated.
 
 - **No `README.Rmd`, unlike the shared rule**: edit `README.md` directly and
   run its example.
