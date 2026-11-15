@@ -6,9 +6,6 @@ on:
   # and the schedule checks main (r-actions README, "Pushes to main").
   pull_request:
     types: [opened, synchronize, reopened, labeled]
-  schedule:
-    # Weekly, so a latent problem surfaces without waiting for a push.
-    - cron: "1 21 * * 6"
   workflow_dispatch:
 
 name: native-checks
