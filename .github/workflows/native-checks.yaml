@@ -18,13 +18,13 @@ concurrency:
 
 jobs:
   sanitizers:
-    uses: pedrobtz/r-actions/.github/workflows/sanitizers.yml@ae59a2805e622e9ba0f3e902bc5f39eba33c6670 # v1.45.1
+    uses: pedrobtz/r-actions/.github/workflows/sanitizers.yml@v1
     with:
       asan: true
       profile: ${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'full-ci') && 'quick' || 'full' }}
 
   valgrind:
-    uses: pedrobtz/r-actions/.github/workflows/valgrind.yml@bdfde5edd37f25b33af142a4a881585e77bda3c2 # v1.22.0
+    uses: pedrobtz/r-actions/.github/workflows/valgrind.yml@v1
     with:
       # A thread-local block of cli's timer thread, reported as possibly
       # lost; tools/valgrind.supp has the mechanism and the frames.
@@ -32,13 +32,13 @@ jobs:
       profile: ${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'full-ci') && 'quick' || 'full' }}
 
   lto:
-    uses: pedrobtz/r-actions/.github/workflows/lto.yml@bdfde5edd37f25b33af142a4a881585e77bda3c2 # v1.22.0
+    uses: pedrobtz/r-actions/.github/workflows/lto.yml@v1
 
   # ZUDEDUP_SKIP_HEAVY skips the 100 MB properties and the fixture-scale
   # tests: they test values, not PROTECT discipline, and under gctorture they
   # would take hours (Stage 2's first run timed out at two hours).
   gctorture:
-    uses: pedrobtz/r-actions/.github/workflows/gctorture.yml@bdfde5edd37f25b33af142a4a881585e77bda3c2 # v1.22.0
+    uses: pedrobtz/r-actions/.github/workflows/gctorture.yml@v1
     with:
       profile: ${{ github.event_name == 'pull_request' && 'quick' || 'full' }}
       timeout-minutes: 240
@@ -49,7 +49,7 @@ jobs:
   # zufast (LinkingTo) is not on CRAN, which is all the rchk image installs
   # from: github-packages installs it first. Drop it once zufast is on CRAN.
   rchk:
-    uses: pedrobtz/r-actions/.github/workflows/rchk.yml@bdfde5edd37f25b33af142a4a881585e77bda3c2 # v1.22.0
+    uses: pedrobtz/r-actions/.github/workflows/rchk.yml@v1
     with:
       fail-on-findings: true
       github-packages: |
